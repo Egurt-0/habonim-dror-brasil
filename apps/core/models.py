@@ -20,3 +20,29 @@ class BlocoTexto(models.Model):
 
     def __str__(self):
         return self.titulo or self.chave
+
+
+class Topico(models.Model):
+    """Bloco da grade de tópicos da home: título, frase curta e "Saiba mais".
+
+    A foto vem de static/img/topicos/<slug>.<jpg|png|webp>; sem foto, o card fica vermelho.
+    """
+
+    titulo = models.CharField("título", max_length=80)
+    slug = models.SlugField(
+        "slug", max_length=80, unique=True, help_text="Também é o nome do arquivo da foto."
+    )
+    resumo = models.CharField("resumo", max_length=200)
+    link = models.CharField(
+        "link do Saiba mais", max_length=200, help_text="Caminho interno, ex.: /bases/#pilares"
+    )
+    ordem = models.PositiveSmallIntegerField("ordem", default=0)
+    ativo = models.BooleanField("ativo", default=True)
+
+    class Meta:
+        verbose_name = "tópico da home"
+        verbose_name_plural = "tópicos da home"
+        ordering = ["ordem"]
+
+    def __str__(self):
+        return self.titulo

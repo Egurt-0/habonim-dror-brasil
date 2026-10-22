@@ -4,7 +4,7 @@
 {% block titulo %}Quero saber mais{% endblock %}
 
 {% block conteudo %}
-{% include "includes/cabecalho_pagina.html" with sobretitulo="6 · Contato" titulo=blocos.saber_mais_intro.titulo|default:"Quero saber mais" %}
+{% include "includes/cabecalho_pagina.html" with pagina="quero-saber-mais" sobretitulo="6 · Contato" titulo=blocos.saber_mais_intro.titulo|default:"Quero saber mais" %}
 
 <div class="container container--texto">
   <div class="texto">{{ blocos.saber_mais_intro.texto|com_glossario }}</div>

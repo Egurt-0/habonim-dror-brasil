@@ -82,6 +82,67 @@ def test_slogan_editado_aparece_no_rodape(client):
 
 
 @pytest.mark.django_db
+def test_logos_oficiais_aparecem(client):
+    html = client.get(reverse("core:home")).content.decode()
+    assert 'class="marca__semel" src="/static/img/logos/semel.png"' in html
+    assert '<link rel="icon" href="/static/img/logos/semel-circulo.png">' in html
+    assert 'class="hero__semel" src="/static/img/logos/semel-branco.png"' in html
+    assert 'class="chamada__logo" src="/static/img/logos/logo-completo.png"' in html
+
+
+@pytest.mark.django_db
+def test_sem_logos_o_site_continua_funcionando(client, monkeypatch):
+    monkeypatch.setattr("apps.core.imagens.achar", lambda caminho: None)
+    html = client.get(reverse("core:home")).content.decode()
+    assert "marca__semel" not in html
+    assert "Habonim Dror" in html
+
+
+@pytest.mark.django_db
+def test_topicos_da_home_com_saiba_mais(client):
+    html = client.get(reverse("core:home")).content.decode()
+    assert html.count("Saiba mais") >= 9
+    assert 'href="/bases/#pilares"' in html
+    assert 'href="/shichavot-bogrot/#shnat"' in html
+
+
+@pytest.mark.django_db
+def test_topico_sem_foto_fica_vermelho_e_com_foto_usa_imagem(client, monkeypatch):
+    from apps.core import imagens
+
+    original = imagens.achar
+    monkeypatch.setattr(
+        "apps.core.imagens.achar",
+        lambda c: "img/topicos/pilares.jpg" if c == "img/topicos/pilares" else original(c),
+    )
+    html = client.get(reverse("core:home")).content.decode()
+    assert "url('/static/img/topicos/pilares.jpg')" in html
+    assert "topico--sem-foto" in html
+
+
+@pytest.mark.django_db
+def test_fotos_de_fundo_da_home(client, monkeypatch):
+    fotos = ["img/fundos/a.jpg", "img/fundos/b.jpg"]
+    monkeypatch.setattr("apps.core.views.fotos_de_fundo", lambda: fotos)
+    html = client.get(reverse("core:home")).content.decode()
+    assert html.count("url('/static/img/fundos/") == 2
+    assert "hero--sem-foto" not in html
+
+
+@pytest.mark.django_db
+def test_cabecalho_da_pagina_usa_foto_quando_existe(client, monkeypatch):
+    from apps.core import imagens
+
+    original = imagens.achar
+    monkeypatch.setattr(
+        "apps.core.imagens.achar",
+        lambda c: "img/paginas/bases.jpg" if c == "img/paginas/bases" else original(c),
+    )
+    html = client.get(reverse("movimento:bases")).content.decode()
+    assert "url('/static/img/paginas/bases.jpg')" in html
+
+
+@pytest.mark.django_db
 def test_linha_do_tempo_na_pagina_bases(client):
     html = client.get(reverse("movimento:bases")).content.decode()
     assert "1945" in html and "2013" in html

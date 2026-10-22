@@ -1,0 +1,25 @@
+IMAGENS DO SITE — basta colocar o arquivo com o nome certo; o site detecta sozinho.
+Formatos aceitos: .jpg .jpeg .png .webp (logos tambem .svg)
+
+1) LOGOS OFICIAIS  ->  img/logos/   (ja estao la)
+   semel.png          estrela vermelha (topo do site)
+   semel-branco.png   estrela branca (sobre foto/vermelho: home e rodape)
+   logo-completo.png  estrela + "Habonim Dror Brasil" (final da home, login)
+   semel-circulo.png  icone da aba do navegador
+   Para trocar, substitua o arquivo mantendo o nome. Se tiver em .svg, melhor ainda.
+
+2) FOTOS DO FUNDO DA HOME  ->  img/fundos/
+   Qualquer nome. Com mais de uma, elas trocam sozinhas a cada 7 segundos,
+   em ordem alfabetica (use 01-machane.jpg, 02-peula.jpg... para escolher a ordem).
+   Ideal: horizontal, 1920x1080 ou maior, menos de 500 KB cada.
+
+3) FOTO DE CADA TOPICO DA HOME  ->  img/topicos/<nome>.jpg
+   quem-somos  pilares  historia  shichavot-tzeirot  shichavot-bogrot
+   shnat  kehila-hd  contribua  snifim
+   Ideal: 900x1100 (vertical), menos de 300 KB.
+
+4) FOTO DO TOPO DE CADA PAGINA  ->  img/paginas/<nome>.jpg
+   bases  shichavot-tzeirot  shichavot-bogrot  kehila-hd  glossario  quero-saber-mais
+   Ideal: 1920x800, menos de 400 KB.
+
+Sem foto, o lugar fica em vermelho. Fotos com menores: so com autorizacao (LGPD).

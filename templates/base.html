@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block titulo %}{% endblock %}{% block titulo_sufixo %} · Habonim Dror Brasil{% endblock %}</title>
   <meta name="description" content="{% block descricao %}Habonim Dror Brasil: uma rede nacional de educação judaica não formal, com 80 anos de história no Brasil.{% endblock %}">
+  <meta name="theme-color" content="#da221e">
+  {% if logos.icone %}<link rel="icon" href="{% static logos.icone %}">{% endif %}
   <link rel="stylesheet" href="{% static 'css/site.css' %}">
   <script src="{% static 'js/site.js' %}" defer></script>
 </head>
@@ -13,9 +15,12 @@
 
   <header class="topo">
     <div class="topo__barra container">
-      <a class="marca" href="{% url 'core:home' %}">
-        <span class="marca__nome">Habonim Dror</span>
-        <span class="marca__pais">Brasil</span>
+      <a class="marca" href="{% url 'core:home' %}" aria-label="Habonim Dror Brasil, página inicial">
+        {% if logos.semel %}<img class="marca__semel" src="{% static logos.semel %}" alt="">{% endif %}
+        <span class="marca__texto">
+          <span class="marca__nome">Habonim Dror</span>
+          <span class="marca__pais">Brasil</span>
+        </span>
       </a>
 
       <button class="topo__menu-botao" type="button" aria-expanded="false" aria-controls="menu-principal">
@@ -55,9 +60,12 @@
 
   <footer class="rodape">
     <div class="container rodape__grade">
-      <div>
-        <p class="rodape__marca">Habonim Dror Brasil</p>
-        <p class="rodape__slogan">{{ slogan }}</p>
+      <div class="rodape__identidade">
+        {% if logos.semel_branco %}<img class="rodape__semel" src="{% static logos.semel_branco %}" alt="">{% endif %}
+        <div>
+          <p class="rodape__marca">Habonim Dror Brasil</p>
+          <p class="rodape__slogan">{{ slogan }}</p>
+        </div>
       </div>
       <nav aria-label="Rodapé">
         <ul>

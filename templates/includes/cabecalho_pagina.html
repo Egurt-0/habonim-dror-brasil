@@ -1,5 +1,7 @@
-<header class="cabecalho-pagina">
-  <div class="container">
+{% load static imagens %}{% foto_da_pagina pagina as foto %}
+<header class="cabecalho-pagina{% if not foto %} cabecalho-pagina--sem-foto{% endif %}"{% if foto %} style="background-image: url('{% static foto %}')"{% endif %}>
+  <div class="cabecalho-pagina__veu" aria-hidden="true"></div>
+  <div class="container cabecalho-pagina__conteudo">
     {% if sobretitulo %}<p class="sobretitulo">{{ sobretitulo }}</p>{% endif %}
     <h1>{{ titulo }}</h1>
     {% if subtitulo %}<p class="cabecalho-pagina__sub">{{ subtitulo }}</p>{% endif %}

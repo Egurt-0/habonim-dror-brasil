@@ -4,7 +4,7 @@
 {% block titulo %}Shichavot Bogrot{% endblock %}
 
 {% block conteudo %}
-{% include "includes/cabecalho_pagina.html" with sobretitulo="3 · SB" titulo="Shichavot Bogrot" subtitulo="A liderança em formação: a partir do 9º ano, quem foi educado passa a educar." %}
+{% include "includes/cabecalho_pagina.html" with pagina="shichavot-bogrot" sobretitulo="3 · SB" titulo="Shichavot Bogrot" subtitulo="A liderança em formação: a partir do 9º ano, quem foi educado passa a educar." %}
 
 <div class="container container--texto">
   {% include "includes/secao.html" with bloco=blocos.sb_intro %}
@@ -29,7 +29,7 @@
   </section>
 
   {% include "includes/secao.html" with bloco=blocos.sb_machanot_centrais %}
-  {% include "includes/secao.html" with bloco=blocos.sb_shnat %}
+  {% include "includes/secao.html" with bloco=blocos.sb_shnat id="shnat" %}
 
   <aside class="proximo">
     <p>O impacto continua depois da tnuá.</p>

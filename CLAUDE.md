@@ -27,6 +27,37 @@ o que existe.
 - **Área de doações** com **ranking de doadores** e **opção de doação anônima sempre disponível**.
 - **Uma página por snif**, com dados, história, galeria de imagens e foto da Bagrut.
 
+## Identidade visual (IMPORTANTE)
+
+- **As cores do movimento são VERMELHO e BRANCO.** Elas têm que dominar a interface: vermelho
+  para marca, botões, destaques e faixas; branco para fundos e superfícies. Não introduzir
+  outras cores de destaque (azul, verde, amarelo…). Texto em cinza-escuro quase preto.
+- Variáveis em `static/css/site.css` (`:root`): `--vermelho` `#da221e` (tom da logo oficial),
+  `--vermelho-escuro` `#a8151a`, `--vermelho-claro` `#fdecec`, `--branco`. **Sempre usar as
+  variáveis**, nunca hex solto no CSS.
+- **As logos oficiais são obrigatórias.** Ficam em `static/img/logos/` e são expostas em
+  todo template como `logos.*` (`apps.core.context_processors.logos`):
+  - `semel.png`: estrela vermelha (fundo branco), no topo de todas as páginas
+  - `semel-branco.png`: estrela branca transparente, sobre foto/vermelho (hero, rodapé)
+  - `logo-completo.png`: estrela + "Habonim Dror Brasil" (final da home, login)
+  - `semel-circulo.png`: ícone da aba
+- **Nunca desenhar, recriar, recortar, recolorir ou baixar uma versão "parecida" da logo.**
+  Só os arquivos oficiais enviados pelo movimento.
+- Contraste: texto branco sobre `--vermelho`/`--vermelho-escuro`; no fundo vermelho, botões
+  principais são brancos com texto vermelho.
+
+### Layout (referência: template Wix "Empresa de IA, monocromático")
+
+- **Fotos em tela cheia**: o hero da home usa as fotos de `static/img/fundos/` (trocam sozinhas
+  a cada 7 s); os cabeçalhos das páginas internas usam `static/img/paginas/<pagina>.jpg`. Sem
+  foto, o fundo é vermelho. Véu escuro por cima da foto para o texto branco ficar legível.
+- **Grade de tópicos** na home: cada card é um tópico (model `core.Topico`, editável no admin)
+  com foto (`static/img/topicos/<slug>.jpg`), título, frase curta e **"Saiba mais →"**.
+- Tipografia grande, pesada e em caixa alta nos títulos; botões retos em caixa alta; listas
+  com linhas finas em vez de cards com sombra; muito espaço em branco.
+- Detecção de imagens por nome de arquivo: `apps/core/imagens.py` (sem cache em dev, com
+  cache em produção). Instruções para quem vai subir fotos: `static/img/LEIA-ME.txt`.
+
 ## Stack
 
 | Camada | Escolha | Motivo |
@@ -152,6 +183,28 @@ Imagens: validar tipo e tamanho no upload, gerar versão redimensionada/miniatur
   com autorização; nomes de menores são opcionais e escondidos por padrão.
 - O doador controla a própria exposição (anônimo / aparecer no ranking).
 - Coletar só os dados necessários. O e-mail do doador nunca é público.
+
+### Segurança do painel (admin)
+
+O admin **fica**: é por ele que o movimento edita todo o conteúdo sem programador. A decisão
+é proteger o admin, não removê-lo. Antes de ir para produção, implementar:
+
+- [ ] **URL não óbvia** para o admin (nada de `/admin/`), vinda de variável de ambiente.
+- [ ] **2FA obrigatório** para qualquer conta com `is_staff` (`django-otp` / `django-two-factor-auth`).
+- [ ] **Bloqueio após tentativas erradas** de login, no site e no admin (`django-axes`).
+- [ ] **Superusuário só para 1–2 pessoas**, usado apenas para configuração e emergências.
+      No dia a dia, contas de editor com permissões limitadas por grupo (`editor_nacional`,
+      `editor_snif`); editor de snif só altera o próprio snif.
+- [ ] **HTTPS obrigatório** (já configurado em `settings/prod.py`: HSTS, cookies seguros,
+      redirect para HTTPS).
+- [ ] Opcional: admin acessível só por IPs/VPN conhecidos.
+- [ ] **Log de auditoria**: o `LogEntry` do Django já registra quem alterou o quê; avaliar
+      reforço (ex.: `django-auditlog`) quando entrarem doações.
+- [ ] Senhas fortes: validadores do Django já ativos; considerar mínimo de 12 caracteres.
+- [ ] Rodar `python manage.py check --deploy --settings=config.settings.prod` sem avisos.
+- [ ] Backups do Postgres e da pasta de mídia, testados (restauração de verdade).
+
+Em desenvolvimento, o superusuário local serve só para testar; o banco local não é exposto.
 
 ## Convenções
 
