@@ -5,9 +5,9 @@ chalutziano e kibutziano, presente no Brasil desde 1945.
 
 ## Objetivo
 
-Fase 1: um site **introdutório** que apresente o movimento para quem não o conhece (pais,
-comunidade, possíveis chanichim, parceiros, doadores). O material de divulgação define três
-argumentos centrais, que devem guiar texto e layout:
+Um site que **apresenta o movimento** para quem não o conhece (pais, comunidade, possíveis
+chanichim, parceiros, doadores), com **login opcional** e uma **área de doações**. O material
+de divulgação define três argumentos centrais, que devem guiar texto e layout:
 
 1. **Capilaridade nacional**: não é uma tnuá local, é uma rede que conecta o Brasil inteiro.
 2. **Alcance**: chega a crianças sem escola judaica ou outras opções de educação judaica.
@@ -15,8 +15,17 @@ argumentos centrais, que devem guiar texto e layout:
 
 Slogan: **"80 anos formando líderes, construindo comunidade e conectando gerações."**
 
-O site vai crescer (usuários logados e anônimos, censo, contribuições, venda de vinho etc.).
-**Toda decisão deve facilitar adicionar features depois**, sem reescrever o que existe.
+O site vai crescer. **Toda decisão deve facilitar adicionar features depois**, sem reescrever
+o que existe.
+
+### Escopo decidido
+
+- **Acesso anônimo e logado**: todo o conteúdo institucional é público. O login é opcional e
+  existe para recursos como histórico de doações e aparecer no ranking.
+- **Sem loja.** O site não vende nada (nem o Vinho Guefen, que aparece só como informação, com
+  o contato do snif).
+- **Área de doações** com **ranking de doadores** e **opção de doação anônima sempre disponível**.
+- **Uma página por snif**, com dados, história, galeria de imagens e foto da Bagrut.
 
 ## Stack
 
@@ -24,15 +33,17 @@ O site vai crescer (usuários logados e anônimos, censo, contribuições, venda
 |---|---|---|
 | Linguagem | Python 3.12 | O dono do projeto mexe com Python com mais segurança |
 | Framework | **Django 5.2 LTS** | Auth, admin, ORM, migrations, forms e CSRF prontos; suporte até 2028 |
+| Banco | **PostgreSQL** (dev e produção) | Decidido. Usar Postgres também em dev para não haver diferença entre ambientes |
 | Front | Templates Django + CSS próprio; **HTMX** quando precisar de interatividade | Sem build de JS, sem SPA |
+| Imagens | `ImageField` + Pillow; armazenamento via `STORAGES` do Django | Local em dev; em produção, disco da VPS ou S3-compatível (`django-storages`) sem mudar código |
+| Pagamentos | **A definir** (Mercado Pago, Stripe, Pagar.me…) | Isolado atrás de uma interface em `apps/doacoes/gateways/` |
 | API (quando precisar) | Django REST Framework, em `/api/v1/` | Só se houver consumidor real (app, integração) |
-| Banco | SQLite em dev → PostgreSQL em produção | Ainda não decidido; o código não pode depender de um banco específico |
 | Config | `django-environ` + arquivo `.env` | Nada de segredo no código |
 | Deploy | Ainda não decidido (VPS, domínio) | Manter tudo configurável por variável de ambiente |
 
-Por que Django e não FastAPI/Flask: o roadmap inclui contas de usuário, permissões, formulários
-e edição de conteúdo por pessoas não técnicas. O Django já traz isso tudo (o admin vira o
-painel de conteúdo do movimento). FastAPI exigiria montar auth, admin e migrations à mão.
+Por que Django e não FastAPI/Flask: login, permissões, formulários, upload de imagens e
+edição de conteúdo por pessoas não técnicas (o admin vira o painel do movimento) já vêm
+prontos. FastAPI exigiria montar auth, admin e migrations à mão.
 
 ## Arquitetura
 
@@ -49,12 +60,15 @@ habonim-dror-brasil/
 │   └── wsgi.py / asgi.py
 ├── apps/
 │   ├── core/                # home, layout base, páginas institucionais, context processors
+│   ├── contas/              # User customizado, login/cadastro, perfil
 │   ├── movimento/           # pilares, história (timeline), Torá Educativa, shichvot/tochniot
-│   ├── snifim/              # snifim, kehilot parceiras, CCHDs, Instagram de cada snif
+│   ├── snifim/              # snifim, galeria, foto da Bagrut, kehilot parceiras, CCHDs
+│   ├── doacoes/             # doações, ranking, integração com gateway de pagamento
 │   └── glossario/           # termos em hebraico + definição
-│   # futuros: contas/, censo/, contribuicoes/, loja/ (Vinho Guefen), depoimentos/
+│   # futuros: censo/, depoimentos/
 ├── templates/               # base.html + parciais compartilhadas
 ├── static/
+├── media/                   # uploads em dev (fora do git)
 ├── requirements/
 │   ├── base.txt
 │   ├── dev.txt
@@ -63,7 +77,7 @@ habonim-dror-brasil/
 └── manage.py
 ```
 
-### Regras
+### Regras gerais
 
 - **Conteúdo vem do banco, não do template.** Snifim, pilares, tochniot, glossário, números
   e timeline são models editáveis pelo admin. Texto fixo no HTML só para frases de layout.
@@ -72,18 +86,70 @@ habonim-dror-brasil/
 - Cada app tem seu próprio `urls.py` com `app_name` e é incluído em `config/urls.py`.
 - Lógica de negócio fica em `services.py` e consultas reaproveitáveis em `selectors.py`.
   As views são finas.
-- Pensar desde já em **anônimo vs. logado**: as páginas da fase 1 são públicas. Quando entrarem
-  contas, usar um `User` customizado (`apps/contas`). **Criar o custom user ANTES da primeira
-  migration**, porque trocar depois é doloroso. Ou seja, o app `contas` com
-  `AUTH_USER_MODEL` entra já no setup inicial, mesmo vazio.
 - Slugs em URLs públicas (`/snifim/recife/`), nunca IDs.
 - Toda feature nova tem testes (`pytest` + `pytest-django`).
 
+### Contas: anônimo e logado
+
+- **Custom user (`apps/contas.User`, com `AUTH_USER_MODEL`) criado ANTES da primeira migration.**
+  Trocar depois é muito difícil.
+- Login por **e-mail** (não por username).
+- Nenhuma página institucional exige login. Visitante anônimo navega e **pode doar** sem conta.
+- Permissões por grupo do Django: ex. `editor_nacional` (edita tudo) e `editor_snif` (edita só
+  o próprio snif). Modelar a ligação usuário ↔ snif para isso desde o início.
+
+### Snifim
+
+Cada snif tem uma página própria: **`/snifim/<slug>/`** (ex. `/snifim/porto-alegre/`), e uma
+listagem em `/snifim/`.
+
+Model `Snif` (base, extensível):
+- `nome`, `slug`, `cidade`, `estado`, `ano_fundacao`
+- `historia` (texto longo, formatado), `resumo` (para cards da listagem)
+- `instagram`, `contato` (e-mail/WhatsApp, opcional), `endereco` (opcional)
+- `kehila_parceira` (FK para `Kehila`), `tem_cchd` (+ dados da CCHD quando houver)
+- `foto_capa`
+- `ativo` (para esconder sem apagar)
+
+Models relacionados:
+- `FotoSnif`: galeria (`snif` FK, `imagem`, `legenda`, `ordem`, `data`)
+- `Bagrut`: o grupo que gerencia o snif **em um período** (`snif` FK, `ano`/`gestao`, `foto`,
+  `descricao`, `atual: bool`). Guardar histórico de Bagrutot; a página mostra a atual.
+  Membros com nome/tafkid ficam opcionais (são menores de idade em muitos casos; ver Privacidade).
+- `Kehila`: comunidade parceira (`nome`, `cidade`, `site`)
+
+Imagens: validar tipo e tamanho no upload, gerar versão redimensionada/miniatura, sempre com
+`alt` preenchido (texto alternativo para acessibilidade).
+
+### Doações
+
+- App `doacoes`, sem carrinho nem produto: **é doação, não loja**.
+- Model `Doacao`: `valor` (`DecimalField`, nunca float), `moeda`, `status`
+  (`pendente` / `confirmada` / `cancelada` / `estornada`), `usuario` (FK **opcional**),
+  `nome_exibicao`, `email` (opcional), `anonima: bool`, `destino` (geral, snif específico,
+  bolsas Shnat/machané), `gateway`, `gateway_id`, `created_at`.
+- **Doação anônima sempre disponível**, para visitante sem login e para usuário logado. A doação
+  anônima nunca aparece no ranking nem expõe nome ou e-mail em lugar público.
+- **Ranking**: soma só doações `confirmada` e `anonima=False`. Entrar no ranking é uma
+  **escolha explícita** do doador (opt-in), nunca o padrão. Calcular via `selectors.py`
+  (agregação no Postgres); cachear se ficar pesado.
+- Status só muda para `confirmada` pelo **webhook do gateway** (verificando a assinatura),
+  nunca pelo retorno do navegador.
+- Gateway atrás de uma interface (`gateways/base.py` + uma implementação por provedor), para
+  trocar de provedor sem mexer no resto.
+- Nenhum dado de cartão passa pelo nosso servidor: o checkout é do gateway.
+
+### Privacidade (LGPD)
+
+- Muitos chanichim e madrichim são **menores de idade**. Fotos de Bagrut e galeria só sobem
+  com autorização; nomes de menores são opcionais e escondidos por padrão.
+- O doador controla a própria exposição (anônimo / aparecer no ranking).
+- Coletar só os dados necessários. O e-mail do doador nunca é público.
+
 ## Convenções
 
-- Código (nomes de variáveis, funções, models) em **inglês ou português sem acento**; escolher
-  um e manter. Padrão adotado: **português sem acento** para domínio (`Snif`, `Pilar`,
-  `Tochnit`) e inglês para termos técnicos (`created_at`, `is_active`).
+- Código em **português sem acento** para domínio (`Snif`, `Pilar`, `Tochnit`, `Doacao`) e
+  inglês para termos técnicos (`created_at`, `is_active`).
 - Texto exibido ao usuário em **português do Brasil**.
 - Termos em hebraico seguem a grafia do material oficial (tnuá, snif/snifim, chanich/chanichim,
   madrich/madrichim, machané/machanot, peulá/peulot, kehilá/kehilot, shichvá/shichavot).
@@ -101,6 +167,7 @@ habonim-dror-brasil/
 python -m venv .venv
 .venv\Scripts\activate            # Windows
 pip install -r requirements/dev.txt
+# PostgreSQL rodando localmente; DATABASE_URL no .env
 python manage.py migrate
 python manage.py runserver
 pytest
@@ -111,7 +178,7 @@ ruff check . && ruff format .
 
 Fonte: `Material HDBR.pdf` (material de divulgação, outubro de 2026).
 
-### Estrutura de páginas da fase 1
+### Estrutura de páginas
 
 1. **Bases**: quem somos; os 4 pilares; ideologia em movimento; história; Torá Educativa; Dror
    no Brasil hoje; parceiros (kehilot e CCHDs)
@@ -119,9 +186,11 @@ Fonte: `Material HDBR.pdf` (material de divulgação, outubro de 2026).
 3. **SB, Shichavot Bogrot** (a partir do 9º ano): Projeto Hagshem, temas das tochniot,
    machanot centrais, Shnat Hachshará
 4. **Kehilá HD**: formação de liderança (depoimentos), CCHDs, importância do movimento juvenil,
-   Contribua, Censo, Vinho Guefen
-5. **Glossário**
-6. **Quero saber mais**: Instagram de cada snif (é a ação final do site)
+   Censo, Vinho Guefen (só informativo)
+5. **Snifim**: listagem + página de cada snif
+6. **Doe**: área de doações + ranking
+7. **Glossário**
+8. **Quero saber mais**: Instagram de cada snif (é a ação final do site)
 
 ### Os 4 pilares
 - **Judaísmo Cultural Humanista**: tradição judaica centrada no ser humano, plural.
@@ -141,21 +210,31 @@ Pernambuco (Recife), Sociedade Israelita da Bahia, Federação Israelita do Esta
 (BH), Sociedade Israelita Brasileira Beth Jacob (Campinas), Centro Israelita do Paraná (Curitiba).
 
 ### Tochniot (jornada do Projeto Hagshem)
-Solelim Beit → Bonim → Mordim → Maapilim → Magshimim → Shnat → Bagrut (atua como madrich).
+Solelim Beit → Bonim → Mordim → Maapilim → Magshimim → Shnat → Bagrut (atua como madrich e
+gerencia o snif).
 
 ### Números
 10 snifim · mais de 15 países na rede internacional · cerca de 400 chaverim por semana · cerca de 200 por
 machané central · 60 aliot em 10 anos · média de 25 jovens por ano na Shnat.
 
+### Para que servem as doações (do material)
+Sustentar a rede de 10 snifim, a Shnat anual, as machanot centrais e a formação de madrichim,
+principalmente via **bolsas**. O objetivo é que nenhum jovem deixe de ir a uma machané ou à
+Shnat por questão financeira.
+
 ### Pendências de conteúdo (usar placeholder até chegar)
 - Instagram de cada snif e da conta nacional, mais o link do site oficial
+- História, fotos e foto da Bagrut de cada snif
 - 3 depoimentos (ex-chaver, madrich atual, kehilá parceira)
 - Texto e mecanismo do **Censo**
-- Como contribuir (PIX, link, formulário) e como comprar o **Vinho Guefen**
+- Gateway de pagamento e conta que recebe as doações (CNPJ do movimento?)
 
 ## Roadmap
 
-- [ ] **Fase 1**: site introdutório público (páginas acima + glossário + Quero saber mais)
-- [ ] Fase 2: contas de usuário (custom user, login), áreas para logados
-- [ ] Futuro: Censo, Contribua (bolsas), Vinho Guefen (pedidos), depoimentos enviados pelo site
-- [ ] Infra: escolher domínio, VPS e banco; HTTPS; backups
+- [ ] **Fase 1**: setup (Django + Postgres + custom user), páginas institucionais, glossário,
+      Quero saber mais
+- [ ] **Fase 2**: páginas dos snifim (galeria, Bagrut, história) editáveis pelo admin
+- [ ] **Fase 3**: login/cadastro, permissões por snif
+- [ ] **Fase 4**: doações (anônima + logada), webhook do gateway, ranking
+- [ ] Futuro: Censo, depoimentos enviados pelo site, API pública se necessário
+- [ ] Infra: escolher domínio e VPS; HTTPS; backups do Postgres e da pasta de mídia
