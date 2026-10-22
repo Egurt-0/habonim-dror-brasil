@@ -8,7 +8,7 @@ admin.site.site_title = "Painel HDBR"
 admin.site.index_title = "Conteúdo do site"
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    path(settings.ADMIN_URL, admin.site.urls),
     path("contas/", include("apps.contas.urls")),
     path("glossario/", include("apps.glossario.urls")),
     path("", include("apps.movimento.urls")),

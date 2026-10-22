@@ -146,3 +146,12 @@ def test_cabecalho_da_pagina_usa_foto_quando_existe(client, monkeypatch):
 def test_linha_do_tempo_na_pagina_bases(client):
     html = client.get(reverse("movimento:bases")).content.decode()
     assert "1945" in html and "2013" in html
+
+
+@pytest.mark.django_db
+def test_admin_nao_fica_em_barra_admin(client):
+    from django.conf import settings
+
+    assert settings.ADMIN_URL != "admin/"
+    assert client.get("/admin/").status_code == 404
+    assert client.get(f"/{settings.ADMIN_URL}").status_code == 302  # manda para o login

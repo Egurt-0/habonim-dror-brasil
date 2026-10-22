@@ -189,7 +189,9 @@ Imagens: validar tipo e tamanho no upload, gerar versão redimensionada/miniatur
 O admin **fica**: é por ele que o movimento edita todo o conteúdo sem programador. A decisão
 é proteger o admin, não removê-lo. Antes de ir para produção, implementar:
 
-- [ ] **URL não óbvia** para o admin (nada de `/admin/`), vinda de variável de ambiente.
+- [x] **URL não óbvia** para o admin: vem de `DJANGO_ADMIN_URL` no `.env` (`/admin/` dá 404).
+      Em produção a variável é obrigatória e `admin/`/`painel-dev/` são recusados.
+      **Nunca escrever o endereço real em código, commit ou documentação.**
 - [ ] **2FA obrigatório** para qualquer conta com `is_staff` (`django-otp` / `django-two-factor-auth`).
 - [ ] **Bloqueio após tentativas erradas** de login, no site e no admin (`django-axes`).
 - [ ] **Superusuário só para 1–2 pessoas**, usado apenas para configuração e emergências.
@@ -257,8 +259,8 @@ Na máquina de desenvolvimento atual, o Postgres 18 roda na porta **5433** (o 16
 - WhiteNoise (arquivos estáticos) só é ligado em `settings/prod.py`.
 
 URLs atuais: `/`, `/bases/`, `/shichavot-tzeirot/`, `/shichavot-bogrot/`, `/kehila-hd/`,
-`/glossario/`, `/quero-saber-mais/`, `/contas/entrar/`, `/contas/sair/`, `/contas/sem-login/`,
-`/admin/`.
+`/glossario/`, `/quero-saber-mais/`, `/contas/entrar/`, `/contas/sair/`, `/contas/sem-login/`
+e o admin no endereço definido em `DJANGO_ADMIN_URL` (ver `.env`).
 
 ## Contexto do movimento (resumo do material oficial)
 

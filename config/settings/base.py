@@ -18,6 +18,10 @@ DEBUG = env("DJANGO_DEBUG")
 ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS")
 CSRF_TRUSTED_ORIGINS = env("DJANGO_CSRF_TRUSTED_ORIGINS")
 
+# Endereço do painel admin. Nunca "admin/": vem do .env para não ficar no código público.
+# Em produção é obrigatório (prod.py não tem valor padrão).
+ADMIN_URL = env("DJANGO_ADMIN_URL", default="painel-dev/").strip("/") + "/"
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
