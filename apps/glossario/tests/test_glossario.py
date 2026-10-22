@@ -36,6 +36,25 @@ class TestTextoComGlossario:
         html = texto_com_glossario("Primeiro.\n\nSegundo.")
         assert html.count("<p>") == 2
 
+    def test_termo_com_apostrofo_e_reconhecido(self):
+        Termo.objects.create(
+            termo="Rosh Ha'shaná", slug="rosh", definicao="x", variantes="ha'shaná"
+        )
+        html = texto_com_glossario("Festa de Ha'shaná.")
+        assert 'href="/glossario/#rosh"' in html
+        assert "Ha&#x27;shaná</a>" in html
+
+    def test_nao_casa_dentro_de_entidade_html(self):
+        Termo.objects.create(termo="Amp", slug="amp", definicao="x", variantes="amp, quot")
+        html = texto_com_glossario('Pão & "vinho"')
+        assert "&amp;" in html and "&quot;vinho&quot;" in html
+        assert 'class="termo"' not in html
+
+    def test_inline_nao_cria_paragrafo(self):
+        html = texto_com_glossario("Solelim e snif.", paragrafos=False)
+        assert "<p>" not in html
+        assert 'href="/glossario/#snif"' in html
+
     def test_novo_termo_aparece_sem_reiniciar(self):
         texto_com_glossario("aquecer o cache")
         Termo.objects.create(termo="Sicha", slug="sicha", definicao="Conversa.", variantes="sicha")

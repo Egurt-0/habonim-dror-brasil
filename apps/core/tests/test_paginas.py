@@ -45,6 +45,43 @@ def test_bloco_inexistente_nao_quebra():
 
 
 @pytest.mark.django_db
+def test_tochniot_sem_paragrafo_aninhado(client):
+    html = client.get(reverse("movimento:sb")).content.decode()
+    assert "<p><p>" not in html.replace("\n", "").replace(" ", "")
+
+
+@pytest.mark.django_db
+def test_rotulos_dos_numeros_tem_glossario(client):
+    html = client.get(reverse("movimento:bases")).content.decode()
+    assert '<span class="numero__rotulo"><a class="termo" href="/glossario/#chaver"' in html
+
+
+@pytest.mark.django_db
+def test_secao_vazia_em_bases_nao_deixa_titulo_vazio(client):
+    BlocoTexto.objects.filter(chave__in=["quem_somos", "historia", "parceiros"]).delete()
+    html = client.get(reverse("movimento:bases")).content.decode()
+    assert "<h2></h2>" not in html
+    assert 'href="#quem-somos"' not in html
+    assert "<h2>História</h2>" in html
+
+
+@pytest.mark.django_db
+def test_contagem_de_snifim_vem_do_banco(client):
+    from apps.snifim.models import Snif
+
+    Snif.objects.filter(slug="manaus").update(ativo=False)
+    html = client.get(reverse("movimento:bases")).content.decode()
+    assert "Os 9 snifim" in html
+
+
+@pytest.mark.django_db
+def test_slogan_editado_aparece_no_rodape(client):
+    BlocoTexto.objects.filter(chave="slogan").update(titulo="Slogan novo.")
+    html = client.get(reverse("movimento:st")).content.decode()
+    assert "Slogan novo." in html
+
+
+@pytest.mark.django_db
 def test_linha_do_tempo_na_pagina_bases(client):
     html = client.get(reverse("movimento:bases")).content.decode()
     assert "1945" in html and "2013" in html

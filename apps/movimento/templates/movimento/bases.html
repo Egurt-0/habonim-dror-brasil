@@ -10,7 +10,7 @@
   <nav class="sumario" aria-label="Nesta página">
     <p class="sumario__titulo">Nesta página</p>
     <ol>
-      <li><a href="#quem-somos">Quem somos</a></li>
+      {% if blocos.quem_somos.texto %}<li><a href="#quem-somos">Quem somos</a></li>{% endif %}
       <li><a href="#pilares">Os quatro pilares</a></li>
       <li><a href="#historia">História</a></li>
       <li><a href="#tora-educativa">Torá Educativa</a></li>
@@ -36,14 +36,14 @@
           </article>
         {% endfor %}
       </div>
-      <div class="texto">{{ blocos.pilares_intro.texto|com_glossario }}</div>
+      {% if blocos.pilares_intro.texto %}<div class="texto">{{ blocos.pilares_intro.texto|com_glossario }}</div>{% endif %}
     </section>
 
     {% include "includes/secao.html" with bloco=blocos.ideologia_em_movimento %}
 
     <section class="secao" id="historia">
-      <h2>{{ blocos.historia.titulo }}</h2>
-      <div class="texto">{{ blocos.historia.texto|com_glossario }}</div>
+      <h2>{{ blocos.historia.titulo|default:"História" }}</h2>
+      {% if blocos.historia.texto %}<div class="texto">{{ blocos.historia.texto|com_glossario }}</div>{% endif %}
       <ol class="linha-do-tempo" aria-label="Fundação dos snifim">
         {% for ano, snifim_do_ano in linha_do_tempo %}
           <li>
@@ -55,8 +55,8 @@
     </section>
 
     <section class="secao" id="tora-educativa">
-      <h2>{{ blocos.tora_educativa.titulo }}</h2>
-      <div class="texto">{{ blocos.tora_educativa.texto|com_glossario }}</div>
+      <h2>{{ blocos.tora_educativa.titulo|default:"Torá Educativa" }}</h2>
+      {% if blocos.tora_educativa.texto %}<div class="texto">{{ blocos.tora_educativa.texto|com_glossario }}</div>{% endif %}
       <p>Entre as principais referências estão:</p>
       <dl class="referencias">
         {% for ref in referencias %}
@@ -66,26 +66,26 @@
           </div>
         {% endfor %}
       </dl>
-      <div class="texto">{{ blocos.tora_educativa_objetivo.texto|com_glossario }}</div>
+      {% if blocos.tora_educativa_objetivo.texto %}<div class="texto">{{ blocos.tora_educativa_objetivo.texto|com_glossario }}</div>{% endif %}
     </section>
 
     <section class="secao" id="hoje">
-      <h2>{{ blocos.dror_hoje.titulo }}</h2>
+      <h2>{{ blocos.dror_hoje.titulo|default:"Dror no Brasil hoje" }}</h2>
       {% include "includes/numeros.html" %}
-      <h3>Os 10 snifim</h3>
+      <h3>Os {{ snifim|length }} snifim</h3>
       <ul class="lista-snifim">
         {% for snif in snifim %}<li>{{ snif.nome }} <span class="lista-snifim__uf">{{ snif.estado }}</span></li>{% endfor %}
       </ul>
       {% if blocos.rede_internacional.texto %}
         <h3>{{ blocos.rede_internacional.titulo }}</h3>
-        <p>{{ blocos.rede_internacional.texto }}</p>
+        <div class="texto">{{ blocos.rede_internacional.texto|com_glossario }}</div>
       {% endif %}
-      <div class="texto destaque">{{ blocos.dror_hoje.texto|com_glossario }}</div>
+      {% if blocos.dror_hoje.texto %}<div class="texto destaque">{{ blocos.dror_hoje.texto|com_glossario }}</div>{% endif %}
     </section>
 
     <section class="secao" id="parceiros">
-      <h2>{{ blocos.parceiros.titulo }}</h2>
-      <div class="texto">{{ blocos.parceiros.texto|com_glossario }}</div>
+      <h2>{{ blocos.parceiros.titulo|default:"Parceiros" }}</h2>
+      {% if blocos.parceiros.texto %}<div class="texto">{{ blocos.parceiros.texto|com_glossario }}</div>{% endif %}
       {% if kehilot %}
         <h3>Algumas kehilot parceiras</h3>
         <ul class="lista-kehilot">

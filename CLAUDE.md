@@ -102,7 +102,8 @@ habonim-dror-brasil/
 - Login por **e-mail** (não por username).
 - Nenhuma página institucional exige login. Visitante anônimo navega e **pode doar** sem conta.
 - Permissões por grupo do Django: ex. `editor_nacional` (edita tudo) e `editor_snif` (edita só
-  o próprio snif). Modelar a ligação usuário ↔ snif para isso desde o início.
+  o próprio snif). A ligação usuário ↔ snif entra na fase 3, junto com as permissões: é uma
+  migration comum, porque o custom user já existe.
 
 ### Snifim
 
@@ -188,8 +189,11 @@ Na máquina de desenvolvimento atual, o Postgres 18 roda na porta **5433** (o 16
   **Bloco com texto vazio não aparece no site**: é assim que pendências (Censo, conta
   nacional) ficam escondidas até alguém preencher pelo admin.
 - **Glossário automático**: o filtro `{{ texto|com_glossario }}` (`apps/glossario/services.py`)
-  escapa o HTML, cria parágrafos e liga a 1ª ocorrência de cada termo à definição. As formas
-  reconhecidas vêm do campo `variantes` de cada `Termo`.
+  escapa o HTML, cria parágrafos e liga a 1ª ocorrência de cada termo à definição. Para texto
+  curto dentro de `<p>`/`<span>`, use `{{ texto|com_glossario_inline }}` (não cria `<p>`).
+  As formas reconhecidas vêm do campo `variantes` de cada `Termo`. **Todo texto vindo do banco
+  que pode ter termos em hebraico deve passar por um dos dois filtros.**
+- O **slogan** vem do bloco `slogan` e fica disponível em todo template como `{{ slogan }}`.
 - **Conteúdo inicial** está nas migrations `000X_conteudo_inicial.py` de cada app. Elas só criam
   o que não existe (`get_or_create`), então nunca sobrescrevem edições feitas no admin.
 - **Entrada**: `apps/contas/services.py` guarda na sessão a escolha "continuar sem login";

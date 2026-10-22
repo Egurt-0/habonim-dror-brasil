@@ -41,6 +41,24 @@ class TestEntrada:
         resposta = client.post(reverse("contas:sem_login"), {"next": "https://malicioso.com/"})
         assert resposta.url == reverse("core:home")
 
+    @pytest.mark.parametrize("destino", ["bases", "//malicioso.com/", "javascript:alert(1)", ""])
+    def test_continuar_sem_login_com_destino_invalido_vai_para_home(self, client, destino):
+        resposta = client.post(reverse("contas:sem_login"), {"next": destino})
+        assert resposta.status_code == 302
+        assert resposta.url == reverse("core:home")
+
+    def test_logout_nao_pergunta_de_novo_como_entrar(self, client):
+        User.objects.create_user(email="madrich@exemplo.com", password="senha-forte-123")
+        client.login(email="madrich@exemplo.com", password="senha-forte-123")
+        client.post(reverse("contas:sair"))
+        html = client.get(reverse("core:home")).content.decode()
+        assert "Como você quer entrar?" not in html
+        assert "Entrar" in html
+
+    def test_link_entrar_da_home_volta_para_a_pagina(self, client):
+        html = client.get(reverse("core:home")).content.decode()
+        assert f"{reverse('contas:entrar')}?next=/" in html
+
     def test_continuar_sem_login_exige_post(self, client):
         assert client.get(reverse("contas:sem_login")).status_code == 405
 

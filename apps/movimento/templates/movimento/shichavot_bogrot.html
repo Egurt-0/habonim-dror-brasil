@@ -11,13 +11,13 @@
   {% include "includes/secao.html" with bloco=blocos.sb_hagshem %}
 
   <section class="secao">
-    <h2>{{ blocos.sb_tochniot.titulo }}</h2>
+    <h2>{{ blocos.sb_tochniot.titulo|default:"Temas das tochniot" }}</h2>
     <div class="texto">{{ blocos.sb_tochniot.texto|com_glossario }}</div>
     <ol class="jornada">
       {% for tochnit in tochniot %}
         <li class="jornada__etapa">
           <h3>{{ tochnit.nome }}</h3>
-          <p>{{ tochnit.temas|com_glossario }}</p>
+          <p>{{ tochnit.temas|com_glossario_inline }}</p>
         </li>
       {% endfor %}
       <li class="jornada__etapa jornada__etapa--fim">

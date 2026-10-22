@@ -1,5 +1,3 @@
-import re
-
 from django.urls import reverse
 from django.utils.html import escape, linebreaks
 from django.utils.safestring import mark_safe
@@ -7,33 +5,33 @@ from django.utils.safestring import mark_safe
 from .selectors import formas_do_glossario
 
 
-def texto_com_glossario(texto):
-    """Escapa o texto, quebra em parágrafos e liga a 1ª ocorrência de cada termo ao glossário.
+def texto_com_glossario(texto, paragrafos=True):
+    """Liga a 1ª ocorrência de cada termo ao glossário e devolve HTML seguro.
 
-    O resultado é HTML seguro: todo conteúdo vindo do banco é escapado antes de receber
-    as marcações do glossário.
+    A busca é feita no texto original; cada trecho entre termos é escapado separadamente,
+    então nada vindo do banco vira HTML. Com `paragrafos=True`, quebra em <p>; senão,
+    devolve só o trecho (para usar dentro de <p>, <span> etc.).
     """
-    html = escape(texto or "")
-    formas = formas_do_glossario()
-    if formas:
+    texto = texto or ""
+    formas, padrao = formas_do_glossario()
+    partes = []
+    if padrao:
         url = reverse("glossario:lista")
-        padrao = re.compile(
-            r"(?<!\w)("
-            + "|".join(re.escape(f) for f in sorted(formas, key=len, reverse=True))
-            + r")(?!\w)",
-            re.IGNORECASE,
-        )
         ja_ligados = set()
-
-        def ligar(match):
+        inicio = 0
+        for match in padrao.finditer(texto):
             slug, definicao = formas[match.group(0).lower()]
             if slug in ja_ligados:
-                return match.group(0)
+                continue
             ja_ligados.add(slug)
-            return (
+            partes.append(escape(texto[inicio : match.start()]))
+            partes.append(
                 f'<a class="termo" href="{url}#{slug}" data-definicao="{escape(definicao)}">'
-                f"{match.group(0)}</a>"
+                f"{escape(match.group(0))}</a>"
             )
-
-        html = padrao.sub(ligar, html)
-    return mark_safe(linebreaks(html))
+            inicio = match.end()
+        partes.append(escape(texto[inicio:]))
+    else:
+        partes.append(escape(texto))
+    html = "".join(partes)
+    return mark_safe(linebreaks(html) if paragrafos else html)

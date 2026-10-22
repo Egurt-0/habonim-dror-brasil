@@ -1,9 +1,9 @@
-<ul class="numeros">
+{% load glossario %}<ul class="numeros">
   {% for numero in numeros %}
     <li class="numero">
       {% if numero.prefixo %}<span class="numero__prefixo">{{ numero.prefixo }}</span>{% endif %}
       <span class="numero__valor">{{ numero.valor }}</span>
-      <span class="numero__rotulo">{{ numero.rotulo }}</span>
+      <span class="numero__rotulo">{{ numero.rotulo|com_glossario_inline }}</span>
     </li>
   {% endfor %}
 </ul>

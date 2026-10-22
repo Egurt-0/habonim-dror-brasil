@@ -8,7 +8,7 @@ ARGUMENTOS = ["arg_capilaridade", "arg_alcance", "arg_impacto"]
 
 
 def home(request):
-    textos = blocos("home_hero", "slogan", *ARGUMENTOS)
+    textos = blocos("home_hero", *ARGUMENTOS)
     contexto = {
         "blocos": textos,
         "argumentos": [textos[chave] for chave in ARGUMENTOS],
