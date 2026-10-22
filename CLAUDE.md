@@ -93,6 +93,12 @@ habonim-dror-brasil/
 
 - **Custom user (`apps/contas.User`, com `AUTH_USER_MODEL`) criado ANTES da primeira migration.**
   Trocar depois é muito difícil.
+- **Duas opções explícitas na entrada do site: "Entrar" (login/cadastro) e "Continuar sem
+  login".** A escolha anônima é lembrada na sessão (não perguntar de novo a cada página).
+  O botão "Entrar" fica sempre visível no cabeçalho para quem escolheu seguir sem login.
+- A tela de escolha **não bloqueia o conteúdo**: links diretos (`/snifim/recife/`, vindos do
+  Instagram ou do Google) abrem a página normalmente. Bloquear prejudicaria o SEO e quem chega
+  por link.
 - Login por **e-mail** (não por username).
 - Nenhuma página institucional exige login. Visitante anônimo navega e **pode doar** sem conta.
 - Permissões por grupo do Django: ex. `editor_nacional` (edita tudo) e `editor_snif` (edita só
