@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block titulo %}Kehilá HD{% endblock %}
+
+{% block conteudo %}
+{% include "includes/cabecalho_pagina.html" with sobretitulo="4 · Kehilá HD" titulo="O impacto que vai além da tnuá" subtitulo="Oito décadas formando pessoas que continuam construindo suas comunidades." %}
+
+<div class="container container--texto">
+  {% include "includes/secao.html" with bloco=blocos.kh_lideranca %}
+  {% include "includes/secao.html" with bloco=blocos.kh_cchds %}
+  {% include "includes/secao.html" with bloco=blocos.kh_importancia %}
+  {% include "includes/secao.html" with bloco=blocos.kh_contribua classe="secao--destaque" id="contribua" %}
+  {% include "includes/secao.html" with bloco=blocos.kh_censo id="censo" %}
+  {% include "includes/secao.html" with bloco=blocos.kh_vinho id="vinho" %}
+</div>
+{% endblock %}

@@ -1,0 +1,6 @@
+{% load glossario %}{% if bloco.texto %}
+<section class="secao{% if classe %} {{ classe }}{% endif %}"{% if id %} id="{{ id }}"{% endif %}>
+  {% if bloco.titulo %}<h2>{{ bloco.titulo }}</h2>{% endif %}
+  <div class="texto">{{ bloco.texto|com_glossario }}</div>
+</section>
+{% endif %}

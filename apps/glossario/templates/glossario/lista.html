@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block titulo %}Glossário{% endblock %}
+
+{% block conteudo %}
+{% include "includes/cabecalho_pagina.html" with sobretitulo="5 · Glossário" titulo=blocos.glossario_intro.titulo|default:"Glossário" subtitulo=blocos.glossario_intro.texto %}
+
+<div class="container container--texto">
+  <dl class="glossario">
+    {% for termo in termos %}
+      <div class="glossario__item" id="{{ termo.slug }}">
+        <dt>{{ termo.termo }}</dt>
+        <dd>{{ termo.definicao }}</dd>
+      </div>
+    {% empty %}
+      <p>Nenhum termo cadastrado ainda.</p>
+    {% endfor %}
+  </dl>
+</div>
+{% endblock %}

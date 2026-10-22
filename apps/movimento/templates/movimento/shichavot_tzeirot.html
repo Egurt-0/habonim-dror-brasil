@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block titulo %}Shichavot Tzeirot{% endblock %}
+
+{% block conteudo %}
+{% include "includes/cabecalho_pagina.html" with sobretitulo="2 · ST" titulo="Shichavot Tzeirot" subtitulo="As kvutzot mais jovens: de Chalutzim até Solelim Beit." %}
+
+<div class="container container--texto">
+  {% include "includes/secao.html" with bloco=blocos.st_intro %}
+  {% include "includes/secao.html" with bloco=blocos.st_sabados %}
+  {% include "includes/secao.html" with bloco=blocos.st_machanot_locais %}
+
+  <aside class="proximo">
+    <p>E depois do Solelim Beit?</p>
+    <a class="botao" href="{% url 'movimento:sb' %}">Conheça as Shichavot Bogrot</a>
+  </aside>
+</div>
+{% endblock %}

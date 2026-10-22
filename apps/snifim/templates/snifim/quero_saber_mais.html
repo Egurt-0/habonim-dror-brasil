@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load glossario %}
+
+{% block titulo %}Quero saber mais{% endblock %}
+
+{% block conteudo %}
+{% include "includes/cabecalho_pagina.html" with sobretitulo="6 · Contato" titulo=blocos.saber_mais_intro.titulo|default:"Quero saber mais" %}
+
+<div class="container container--texto">
+  <div class="texto">{{ blocos.saber_mais_intro.texto|com_glossario }}</div>
+
+  <ul class="snifim-contato">
+    {% for snif in snifim %}
+      <li class="snif-contato">
+        <div>
+          <p class="snif-contato__nome">{{ snif.nome }}</p>
+          <p class="snif-contato__info">{% if snif.cidade != snif.nome %}{{ snif.cidade }} · {% endif %}{{ snif.estado }} · desde {{ snif.ano_fundacao }}</p>
+        </div>
+        {% if snif.instagram %}
+          <a class="botao botao--fantasma" href="{{ snif.instagram_url }}" rel="noopener" target="_blank">@{{ snif.instagram }}</a>
+        {% else %}
+          <span class="snif-contato__breve">Instagram em breve</span>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+
+  {% include "includes/secao.html" with bloco=blocos.conta_nacional %}
+
+  <p class="slogan">{{ blocos.slogan.titulo }}</p>
+</div>
+{% endblock %}

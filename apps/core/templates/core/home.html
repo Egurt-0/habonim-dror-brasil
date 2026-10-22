@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load glossario %}
+
+{% block titulo %}Habonim Dror Brasil{% endblock %}
+{% block titulo_sufixo %}{% endblock %}
+
+{% block conteudo %}
+<section class="hero">
+  <div class="container hero__grade">
+    <div>
+      <p class="sobretitulo">Movimento juvenil judaico · desde 1945</p>
+      <h1 class="hero__titulo">{{ blocos.home_hero.titulo }}</h1>
+      <p class="hero__sub">{{ blocos.home_hero.texto }}</p>
+
+      {% if ja_escolheu_entrada %}
+        <div class="hero__acoes">
+          <a class="botao botao--grande" href="{% url 'movimento:bases' %}">Conheça a tnuá</a>
+          <a class="botao botao--grande botao--claro" href="{% url 'snifim:saber_mais' %}">Encontre o snif da sua cidade</a>
+        </div>
+      {% else %}
+        <div class="entrada" role="group" aria-labelledby="entrada-titulo">
+          <p id="entrada-titulo" class="entrada__titulo">Como você quer entrar?</p>
+          <div class="entrada__opcoes">
+            <a class="botao botao--grande" href="{% url 'contas:entrar' %}">Entrar com minha conta</a>
+            <form method="post" action="{% url 'contas:sem_login' %}">
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{{ request.path }}">
+              <button type="submit" class="botao botao--grande botao--claro">Continuar sem login</button>
+            </form>
+          </div>
+          <p class="entrada__nota">Todo o conteúdo do site é aberto. A conta serve para recursos como acompanhar suas doações.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="faixa">
+  <div class="container">
+    {% include "includes/numeros.html" %}
+  </div>
+</section>
+
+<section class="secao container">
+  <h2 class="secao__titulo-central">Por que o Habonim Dror importa</h2>
+  <div class="cards cards--3">
+    {% for bloco in argumentos %}
+      <article class="card">
+        <h3>{{ bloco.titulo }}</h3>
+        <div class="texto">{{ bloco.texto|com_glossario }}</div>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="secao container">
+  <h2 class="secao__titulo-central">Conheça a tnuá</h2>
+  <div class="cards cards--2">
+    <a class="card card--link" href="{% url 'movimento:bases' %}">
+      <h3>Bases</h3>
+      <p>Quem somos, os quatro pilares, nossa história e a rede no Brasil.</p>
+    </a>
+    <a class="card card--link" href="{% url 'movimento:st' %}">
+      <h3>Shichavot Tzeirot</h3>
+      <p>Os mais novos: sábados de atividade e machanot locais.</p>
+    </a>
+    <a class="card card--link" href="{% url 'movimento:sb' %}">
+      <h3>Shichavot Bogrot</h3>
+      <p>A partir do 9º ano: a formação de líderes, as machanot centrais e a Shnat.</p>
+    </a>
+    <a class="card card--link" href="{% url 'movimento:kehila' %}">
+      <h3>Kehilá HD</h3>
+      <p>O impacto que vai além da tnuá: lideranças, CCHDs e como contribuir.</p>
+    </a>
+  </div>
+</section>
+
+<section class="chamada">
+  <div class="container">
+    <p class="chamada__texto">{{ blocos.slogan.titulo }}</p>
+    <a class="botao botao--grande botao--claro" href="{% url 'snifim:saber_mais' %}">Quero saber mais</a>
+  </div>
+</section>
+{% endblock %}

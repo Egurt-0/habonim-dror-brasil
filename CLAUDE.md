@@ -167,18 +167,41 @@ Imagens: validar tipo e tamanho no upload, gerar versão redimensionada/miniatur
 
 ## Comandos
 
-> Ainda não existe código. Atualizar esta seção quando o projeto for criado.
-
 ```bash
 python -m venv .venv
 .venv\Scripts\activate            # Windows
 pip install -r requirements/dev.txt
-# PostgreSQL rodando localmente; DATABASE_URL no .env
-python manage.py migrate
+copy .env.example .env            # e preencher (DATABASE_URL, DJANGO_SECRET_KEY)
+python manage.py migrate          # cria tabelas E carrega o conteúdo inicial
+python manage.py createsuperuser  # pede e-mail e senha (acesso ao /admin/)
 python manage.py runserver
 pytest
 ruff check . && ruff format .
 ```
+
+Na máquina de desenvolvimento atual, o Postgres 18 roda na porta **5433** (o 16 está na 5432).
+
+## Como o código está organizado (fase 1 pronta)
+
+- **Textos institucionais** ficam no model `core.BlocoTexto`, buscados por `chave` via
+  `apps.core.selectors.blocos(...)`. No template: `{% include "includes/secao.html" with bloco=blocos.x %}`.
+  **Bloco com texto vazio não aparece no site**: é assim que pendências (Censo, conta
+  nacional) ficam escondidas até alguém preencher pelo admin.
+- **Glossário automático**: o filtro `{{ texto|com_glossario }}` (`apps/glossario/services.py`)
+  escapa o HTML, cria parágrafos e liga a 1ª ocorrência de cada termo à definição. As formas
+  reconhecidas vêm do campo `variantes` de cada `Termo`.
+- **Conteúdo inicial** está nas migrations `000X_conteudo_inicial.py` de cada app. Elas só criam
+  o que não existe (`get_or_create`), então nunca sobrescrevem edições feitas no admin.
+- **Entrada**: `apps/contas/services.py` guarda na sessão a escolha "continuar sem login";
+  `ja_escolheu_entrada` fica disponível em todo template via `apps.core.context_processors.site`.
+- Templates de cada app ficam em `apps/<app>/templates/<app>/`; os compartilhados, em
+  `templates/` (`base.html`, `includes/`). CSS em `static/css/site.css`, com as cores em
+  variáveis no topo.
+- WhiteNoise (arquivos estáticos) só é ligado em `settings/prod.py`.
+
+URLs atuais: `/`, `/bases/`, `/shichavot-tzeirot/`, `/shichavot-bogrot/`, `/kehila-hd/`,
+`/glossario/`, `/quero-saber-mais/`, `/contas/entrar/`, `/contas/sair/`, `/contas/sem-login/`,
+`/admin/`.
 
 ## Contexto do movimento (resumo do material oficial)
 
@@ -237,8 +260,8 @@ Shnat por questão financeira.
 
 ## Roadmap
 
-- [ ] **Fase 1**: setup (Django + Postgres + custom user), páginas institucionais, glossário,
-      Quero saber mais
+- [x] **Fase 1**: setup (Django + Postgres + custom user), páginas institucionais, glossário,
+      Quero saber mais, entrada com "Entrar" / "Continuar sem login", login por e-mail
 - [ ] **Fase 2**: páginas dos snifim (galeria, Bagrut, história) editáveis pelo admin
 - [ ] **Fase 3**: login/cadastro, permissões por snif
 - [ ] **Fase 4**: doações (anônima + logada), webhook do gateway, ranking

@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load glossario %}
+
+{% block titulo %}Bases{% endblock %}
+
+{% block conteudo %}
+{% include "includes/cabecalho_pagina.html" with sobretitulo="1 · Bases" titulo="Quem somos e no que acreditamos" subtitulo="Uma rede nacional de educação judaica não formal, com 80 anos de história no Brasil." %}
+
+<div class="container pagina-com-sumario">
+  <nav class="sumario" aria-label="Nesta página">
+    <p class="sumario__titulo">Nesta página</p>
+    <ol>
+      <li><a href="#quem-somos">Quem somos</a></li>
+      <li><a href="#pilares">Os quatro pilares</a></li>
+      <li><a href="#historia">História</a></li>
+      <li><a href="#tora-educativa">Torá Educativa</a></li>
+      <li><a href="#hoje">Dror no Brasil hoje</a></li>
+      <li><a href="#parceiros">Parceiros</a></li>
+    </ol>
+  </nav>
+
+  <div class="pagina__corpo">
+    {% include "includes/secao.html" with bloco=blocos.quem_somos id="quem-somos" %}
+
+    <section class="secao" id="pilares">
+      <h2>{{ blocos.pilares_intro.titulo|default:"Os quatro pilares" }}</h2>
+      <div class="pilares">
+        {% for pilar in pilares %}
+          <article class="pilar" id="{{ pilar.slug }}">
+            <h3>{{ pilar.nome }}{% if pilar.subtitulo %} <span class="pilar__sub">{{ pilar.subtitulo }}</span>{% endif %}</h3>
+            <p class="pilar__resumo">{{ pilar.resumo }}</p>
+            <details>
+              <summary>Ler mais sobre {{ pilar.nome }}</summary>
+              <div class="texto">{{ pilar.texto|com_glossario }}</div>
+            </details>
+          </article>
+        {% endfor %}
+      </div>
+      <div class="texto">{{ blocos.pilares_intro.texto|com_glossario }}</div>
+    </section>
+
+    {% include "includes/secao.html" with bloco=blocos.ideologia_em_movimento %}
+
+    <section class="secao" id="historia">
+      <h2>{{ blocos.historia.titulo }}</h2>
+      <div class="texto">{{ blocos.historia.texto|com_glossario }}</div>
+      <ol class="linha-do-tempo" aria-label="Fundação dos snifim">
+        {% for ano, snifim_do_ano in linha_do_tempo %}
+          <li>
+            <span class="linha-do-tempo__ano">{{ ano }}</span>
+            <span class="linha-do-tempo__item">{% for snif in snifim_do_ano %}{{ snif.nome }}{% if not forloop.last %} e {% endif %}{% endfor %}</span>
+          </li>
+        {% endfor %}
+      </ol>
+    </section>
+
+    <section class="secao" id="tora-educativa">
+      <h2>{{ blocos.tora_educativa.titulo }}</h2>
+      <div class="texto">{{ blocos.tora_educativa.texto|com_glossario }}</div>
+      <p>Entre as principais referências estão:</p>
+      <dl class="referencias">
+        {% for ref in referencias %}
+          <div>
+            <dt>{{ ref.nome }}</dt>
+            <dd>{{ ref.descricao|com_glossario }}</dd>
+          </div>
+        {% endfor %}
+      </dl>
+      <div class="texto">{{ blocos.tora_educativa_objetivo.texto|com_glossario }}</div>
+    </section>
+
+    <section class="secao" id="hoje">
+      <h2>{{ blocos.dror_hoje.titulo }}</h2>
+      {% include "includes/numeros.html" %}
+      <h3>Os 10 snifim</h3>
+      <ul class="lista-snifim">
+        {% for snif in snifim %}<li>{{ snif.nome }} <span class="lista-snifim__uf">{{ snif.estado }}</span></li>{% endfor %}
+      </ul>
+      {% if blocos.rede_internacional.texto %}
+        <h3>{{ blocos.rede_internacional.titulo }}</h3>
+        <p>{{ blocos.rede_internacional.texto }}</p>
+      {% endif %}
+      <div class="texto destaque">{{ blocos.dror_hoje.texto|com_glossario }}</div>
+    </section>
+
+    <section class="secao" id="parceiros">
+      <h2>{{ blocos.parceiros.titulo }}</h2>
+      <div class="texto">{{ blocos.parceiros.texto|com_glossario }}</div>
+      {% if kehilot %}
+        <h3>Algumas kehilot parceiras</h3>
+        <ul class="lista-kehilot">
+          {% for kehila in kehilot %}
+            <li>{% if kehila.site %}<a href="{{ kehila.site }}" rel="noopener">{{ kehila.nome }}</a>{% else %}{{ kehila.nome }}{% endif %} <span>· {{ kehila.cidade }}</span></li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+      {% if blocos.cchds_parceiros.texto %}
+        <h3>{{ blocos.cchds_parceiros.titulo }}</h3>
+        <div class="texto">{{ blocos.cchds_parceiros.texto|com_glossario }}</div>
+      {% endif %}
+    </section>
+  </div>
+</div>
+{% endblock %}

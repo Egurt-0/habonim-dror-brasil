@@ -1,0 +1,71 @@
+{% load static %}<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}{% endblock %}{% block titulo_sufixo %} · Habonim Dror Brasil{% endblock %}</title>
+  <meta name="description" content="{% block descricao %}Habonim Dror Brasil: uma rede nacional de educação judaica não formal, com 80 anos de história no Brasil.{% endblock %}">
+  <link rel="stylesheet" href="{% static 'css/site.css' %}">
+  <script src="{% static 'js/site.js' %}" defer></script>
+</head>
+<body>
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+  <header class="topo">
+    <div class="topo__barra container">
+      <a class="marca" href="{% url 'core:home' %}">
+        <span class="marca__nome">Habonim Dror</span>
+        <span class="marca__pais">Brasil</span>
+      </a>
+
+      <button class="topo__menu-botao" type="button" aria-expanded="false" aria-controls="menu-principal">
+        Menu
+      </button>
+
+      <nav id="menu-principal" class="menu" aria-label="Principal">
+        <ul>
+          {% for rotulo, url in menu %}
+            <li><a href="{{ url }}"{% if request.path == url %} aria-current="page"{% endif %}>{{ rotulo }}</a></li>
+          {% endfor %}
+        </ul>
+        <div class="menu__acoes">
+          {% if user.is_authenticated %}
+            <span class="menu__usuario">{{ user }}</span>
+            <form method="post" action="{% url 'contas:sair' %}">
+              {% csrf_token %}
+              <button type="submit" class="botao botao--fantasma">Sair</button>
+            </form>
+          {% else %}
+            <a class="botao botao--fantasma" href="{% url 'contas:entrar' %}?next={{ request.path|urlencode }}">Entrar</a>
+          {% endif %}
+          <a class="botao" href="{% url 'snifim:saber_mais' %}">Quero saber mais</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    {% if messages %}
+      <div class="container mensagens">
+        {% for message in messages %}<p class="mensagem">{{ message }}</p>{% endfor %}
+      </div>
+    {% endif %}
+    {% block conteudo %}{% endblock %}
+  </main>
+
+  <footer class="rodape">
+    <div class="container rodape__grade">
+      <div>
+        <p class="rodape__marca">Habonim Dror Brasil</p>
+        <p class="rodape__slogan">80 anos formando líderes, construindo comunidade e conectando gerações.</p>
+      </div>
+      <nav aria-label="Rodapé">
+        <ul>
+          {% for rotulo, url in menu %}<li><a href="{{ url }}">{{ rotulo }}</a></li>{% endfor %}
+          <li><a href="{% url 'snifim:saber_mais' %}">Quero saber mais</a></li>
+        </ul>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>
