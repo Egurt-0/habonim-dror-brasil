@@ -20,6 +20,7 @@ Formatos aceitos: .jpg .jpeg .png .webp (logos tambem .svg)
 
 4) FOTO DO TOPO DE CADA PAGINA  ->  img/paginas/<nome>.jpg
    bases  shichavot-tzeirot  shichavot-bogrot  kehila-hd  glossario  quero-saber-mais
+   privacidade
    snifim  (topo da lista e de todo snif que ainda nao tem foto de capa)
    Ideal: 1920x800, menos de 400 KB.
 

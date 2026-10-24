@@ -27,6 +27,10 @@ def caminho_bagrut(instancia, nome_arquivo):
     return _caminho(instancia, "bagrut", nome_arquivo)
 
 
+AJUDA_SEM_NOMES_DE_MENORES = (
+    "Não escreva nomes de menores de idade sem autorização dos responsáveis (LGPD)."
+)
+
 AJUDA_AUTORIZACAO = (
     "Marque só se todas as pessoas da foto (ou os responsáveis, no caso de menores) "
     "autorizaram a publicação. Sem essa marcação, a foto não aparece no site."
@@ -75,7 +79,10 @@ class Snif(models.Model):
         "contato",
         max_length=160,
         blank=True,
-        help_text="E-mail ou WhatsApp do snif (aparece no site). Opcional.",
+        help_text=(
+            "E-mail ou WhatsApp institucional do snif (aparece no site). Nunca o número "
+            "pessoal de um chanich ou madrich menor de idade."
+        ),
     )
     endereco = models.CharField("endereço", max_length=200, blank=True)
     kehila = models.ForeignKey(
@@ -144,7 +151,9 @@ class FotoSnif(models.Model):
         max_length=200,
         help_text="O que aparece na foto (para leitores de tela). Ex.: chanichim em roda.",
     )
-    legenda = models.CharField("legenda", max_length=200, blank=True)
+    legenda = models.CharField(
+        "legenda", max_length=200, blank=True, help_text=AJUDA_SEM_NOMES_DE_MENORES
+    )
     data = models.DateField("data", null=True, blank=True)
     ordem = models.PositiveSmallIntegerField("ordem", default=0)
     autorizada = models.BooleanField(
@@ -171,7 +180,7 @@ class Bagrut(models.Model):
 
     snif = models.ForeignKey(Snif, on_delete=models.CASCADE, related_name="bagrutot")
     gestao = models.CharField("gestão", max_length=40, help_text="Ex.: 2026 ou 2025/2026")
-    descricao = models.TextField("descrição", blank=True)
+    descricao = models.TextField("descrição", blank=True, help_text=AJUDA_SEM_NOMES_DE_MENORES)
     foto = models.ImageField(
         "foto", upload_to=caminho_bagrut, blank=True, validators=[validar_imagem]
     )

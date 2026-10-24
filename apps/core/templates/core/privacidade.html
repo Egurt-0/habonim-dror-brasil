@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block titulo %}Privacidade{% endblock %}
+{% block descricao %}Como o site do Habonim Dror Brasil trata dados pessoais, de acordo com a LGPD.{% endblock %}
+
+{% block conteudo %}
+{% include "includes/cabecalho_pagina.html" with pagina="privacidade" sobretitulo="LGPD" titulo=blocos.priv_intro.titulo|default:"Política de privacidade" %}
+
+<div class="container container--texto">
+  {% for bloco in secoes %}{% include "includes/secao.html" with bloco=bloco %}{% endfor %}
+
+  <section class="secao secao--destaque" id="contato">
+    <h2>{{ blocos.priv_encarregado.titulo|default:"Contato do encarregado (DPO)" }}</h2>
+    {% if blocos.priv_encarregado.texto %}
+      <div class="texto"><p>{{ blocos.priv_encarregado.texto|urlize|linebreaksbr }}</p></div>
+    {% else %}
+      <p>O contato do encarregado pelo tratamento de dados será publicado em breve. Até lá,
+        pedidos sobre seus dados podem ser feitos pelo Instagram do seu snif.</p>
+    {% endif %}
+  </section>
+
+  {% if atualizada_em %}<p class="privacidade__data">Última atualização: {{ atualizada_em|date:"d/m/Y" }}</p>{% endif %}
+</div>
+{% endblock %}

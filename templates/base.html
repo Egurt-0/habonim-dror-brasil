@@ -71,6 +71,7 @@
         <ul>
           {% for rotulo, url in menu %}<li><a href="{{ url }}">{{ rotulo }}</a></li>{% endfor %}
           <li><a href="{% url 'snifim:saber_mais' %}">Quero saber mais</a></li>
+          <li><a href="{% url 'core:privacidade' %}">Privacidade</a></li>
         </ul>
       </nav>
     </div>

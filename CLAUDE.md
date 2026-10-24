@@ -28,6 +28,60 @@ o que existe.
 - **Área de doações** com **ranking de doadores** e **opção de doação anônima sempre disponível**.
 - **Uma página por snif**, com dados, história, galeria de imagens e foto da Bagrut.
 
+## LGPD (PRIORIDADE MÁXIMA)
+
+**O site tem que cumprir a LGPD (Lei nº 13.709/2018) em toda decisão.** Isso vem antes de
+layout, prazo ou conveniência: muitos chanichim e madrichim são **menores de idade** (art. 14).
+Toda feature nova responde, antes de ser feita: *que dado pessoal ela trata, com qual base
+legal, por quanto tempo fica guardado e como o titular pede para ver ou apagar?* Se a
+resposta mudar algo, **atualizar a política de privacidade** (blocos `priv_*`) no mesmo PR.
+
+Regras:
+- **Coletar o mínimo.** Nenhum campo "por via das dúvidas". Dado que não é usado não entra.
+- **Menores:** foto (galeria, Bagrut, capa) só aparece com `autorizada=True`, marcada só com
+  autorização de pelo menos um dos pais/responsáveis. Nomes de menores escondidos por padrão.
+  Contatos publicados são **institucionais** do snif, nunca o número pessoal de um menor.
+- **Sem terceiros que recebam o IP do visitante sem necessidade:** nada de Google Fonts,
+  Analytics, pixels ou embeds (ex.: post do Instagram embutido). Link simples para fora pode.
+  Se um dia entrar algo assim, precisa de banner de consentimento antes. Há um teste que
+  garante isso (`apps/core/tests/test_privacidade.py`).
+- **Cookies:** hoje só os essenciais (sessão e CSRF), que não exigem consentimento.
+- **Prazo de guarda:** todo dado pessoal tem prazo. Registros de login (django-axes: e-mail
+  digitado, IP, navegador) ficam `RETENCAO_REGISTROS_DIAS` = 90 dias
+  (`apps/contas/services.py`); o comando `python manage.py limpar_dados_pessoais` apaga o que
+  venceu e as sessões expiradas, e **tem que rodar por cron, diariamente, em produção**.
+  Mudou o prazo, mude o texto do bloco `priv_retencao` (um teste confere os dois).
+- **Dados nunca públicos:** e-mail de usuário ou doador, IP, valor de doação anônima.
+- **Direitos do titular (art. 18):** acesso, correção, exclusão, portabilidade e revogação de
+  consentimento. Toda conta nova (fase 3) e toda doação (fase 4) precisam de um caminho para
+  isso funcionar de verdade.
+- **Senha, IP e e-mail nunca em log ou mensagem de erro em texto aberto** (o axes já mascara).
+
+Já feito:
+- [x] Página `/privacidade/` (política em blocos `priv_*`, editável no admin), com link no
+      rodapé e no login. **O texto é um rascunho: revisar com o movimento e, de preferência,
+      com um advogado antes de ir para produção.**
+- [x] Fotos só com autorização; avisos no admin contra nomes de menores e contato pessoal.
+- [x] Sem recursos de terceiros; só cookies essenciais.
+- [x] Prazo de 90 dias para registros de login + comando de limpeza.
+
+A fazer, por fase:
+- [ ] **Antes de produção:** nomear o **encarregado (DPO)** e preencher o bloco
+      `priv_encarregado` (e-mail de contato); informar o CNPJ do movimento como controlador;
+      agendar o `limpar_dados_pessoais` no cron; guardar fora do site os termos de
+      autorização de imagem assinados pelos responsáveis.
+- [ ] **Fase 3 (contas):** aceite da política no cadastro (com data registrada);
+      menores de 18 só com consentimento de um responsável ou sem cadastro (decidir);
+      página "meus dados" com baixar (portabilidade), corrigir e **excluir a conta**;
+      e-mail de confirmação; 2FA para staff.
+- [ ] **Fase 4 (doações):** ranking só por opt-in explícito; definir o prazo de guarda das
+      doações (obrigação fiscal) e anonimizar o que não precisa ficar; contrato/termos de
+      tratamento com o gateway de pagamento; atualizar a política.
+- [ ] **Censo:** antes de coletar qualquer dado, definir finalidade, base legal, prazo e
+      quem acessa; se envolver menores, consentimento dos responsáveis.
+- [ ] Procedimento para incidente de segurança (quem avisa a ANPD e os titulares, em quanto
+      tempo).
+
 ## Identidade visual (IMPORTANTE)
 
 - **As cores do movimento são VERMELHO e BRANCO.** Elas têm que dominar a interface: vermelho
@@ -180,10 +234,8 @@ Imagens: validar tipo e tamanho no upload, gerar versão redimensionada/miniatur
 
 ### Privacidade (LGPD)
 
-- Muitos chanichim e madrichim são **menores de idade**. Fotos de Bagrut e galeria só sobem
-  com autorização; nomes de menores são opcionais e escondidos por padrão.
-- O doador controla a própria exposição (anônimo / aparecer no ranking).
-- Coletar só os dados necessários. O e-mail do doador nunca é público.
+Ver **LGPD (PRIORIDADE MÁXIMA)** no topo deste arquivo. Nas doações: o doador controla a
+própria exposição (anônimo / aparecer no ranking) e o e-mail do doador nunca é público.
 
 ### Segurança do painel (admin)
 
@@ -238,6 +290,7 @@ python manage.py migrate          # cria tabelas E carrega o conteúdo inicial
 python manage.py createsuperuser  # pede e-mail e senha (acesso ao /admin/)
 python manage.py runserver
 pytest
+python manage.py limpar_dados_pessoais  # LGPD: em produção, diário no cron
 ruff check . && ruff format .
 ```
 
@@ -278,7 +331,7 @@ Na máquina de desenvolvimento atual, o Postgres 18 roda na porta **5433** (o 16
   apagado da `media/` depois do commit (`services.py` + `signals.py`).
 
 URLs atuais: `/`, `/bases/`, `/shichavot-tzeirot/`, `/shichavot-bogrot/`, `/kehila-hd/`,
-`/snifim/`, `/snifim/<slug>/`, `/glossario/`, `/quero-saber-mais/`, `/contas/entrar/`, `/contas/sair/`, `/contas/sem-login/`
+`/snifim/`, `/snifim/<slug>/`, `/glossario/`, `/privacidade/`, `/quero-saber-mais/`, `/contas/entrar/`, `/contas/sair/`, `/contas/sem-login/`
 e o admin no endereço definido em `DJANGO_ADMIN_URL` (ver `.env`).
 
 ## Contexto do movimento (resumo do material oficial)
@@ -335,6 +388,8 @@ Shnat por questão financeira.
 - 3 depoimentos (ex-chaver, madrich atual, kehilá parceira)
 - Texto e mecanismo do **Censo**
 - Gateway de pagamento e conta que recebe as doações (CNPJ do movimento?)
+- **LGPD:** nome e e-mail do encarregado (DPO); CNPJ do controlador; revisão jurídica
+  do texto da política de privacidade
 
 ## Roadmap
 

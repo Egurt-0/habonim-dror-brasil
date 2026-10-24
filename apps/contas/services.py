@@ -1,6 +1,9 @@
 """Escolha de entrada (com ou sem login) e o IP usado no bloqueio de tentativas de login."""
 
+from datetime import timedelta
+
 from django.conf import settings
+from django.utils import timezone
 
 SESSION_KEY_SEM_LOGIN = "seguir_sem_login"
 
@@ -27,3 +30,23 @@ def ip_do_cliente(request):
         if ultimo:
             return ultimo
     return request.META.get("REMOTE_ADDR")
+
+
+# LGPD: registros de segurança (e-mail digitado, IP, navegador) só ficam pelo tempo necessário.
+# O prazo aparece na política de privacidade (bloco priv_retencao); mudar lá também.
+RETENCAO_REGISTROS_DIAS = 90
+
+
+def apagar_registros_de_acesso_antigos(dias=RETENCAO_REGISTROS_DIAS):
+    """Apaga tentativas e registros de login do django-axes mais velhos que `dias`.
+
+    Devolve quantos registros foram apagados.
+    """
+    from axes.models import AccessAttempt, AccessFailureLog, AccessLog
+
+    limite = timezone.now() - timedelta(days=dias)
+    total = 0
+    for model in (AccessAttempt, AccessFailureLog, AccessLog):
+        apagados, _ = model.objects.filter(attempt_time__lt=limite).delete()
+        total += apagados
+    return total

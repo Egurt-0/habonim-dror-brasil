@@ -387,6 +387,9 @@ details[open] summary { margin-bottom: 1rem; }
 .galeria__item a:hover img { transform: scale(1.04); }
 .galeria__legenda { margin: 0.4rem 0 0; font-size: 0.85rem; color: var(--texto-suave); line-height: 1.4; }
 
+/* Privacidade */
+.privacidade__data { margin: 3rem 0 0; color: var(--texto-suave); font-size: 0.85rem; }
+
 /* Login */
 .painel { border-top: 4px solid var(--vermelho); padding: 2.5rem 0; margin: 3rem 0; }
 .painel h1 { font-size: 2.2rem; }
