@@ -194,7 +194,12 @@ O admin **fica**: é por ele que o movimento edita todo o conteúdo sem programa
       Em produção a variável é obrigatória e `admin/`/`painel-dev/` são recusados.
       **Nunca escrever o endereço real em código, commit ou documentação.**
 - [ ] **2FA obrigatório** para qualquer conta com `is_staff` (`django-otp` / `django-two-factor-auth`).
-- [ ] **Bloqueio após tentativas erradas** de login, no site e no admin (`django-axes`).
+- [x] **Bloqueio após tentativas erradas** de login, no site e no admin (`django-axes`):
+      5 erros por e-mail + IP bloqueiam por 1 hora. Atrás de proxy (nginx), ligar
+      `DJANGO_ATRAS_DE_PROXY=True`, senão todo mundo conta como o mesmo IP.
+      Para desbloquear alguém: `python manage.py axes_reset_username <email>`.
+- [x] **Chave secreta**: `settings/prod.py` não sobe com a chave de exemplo ou fraca
+      (`config/settings/seguranca.py`).
 - [ ] **Superusuário só para 1–2 pessoas**, usado apenas para configuração e emergências.
       No dia a dia, contas de editor com permissões limitadas por grupo (`editor_nacional`,
       `editor_snif`); editor de snif só altera o próprio snif.
@@ -265,6 +270,7 @@ Na máquina de desenvolvimento atual, o Postgres 18 roda na porta **5433** (o 16
   Fotos enviadas são reduzidas para 1920 px e a galeria ganha miniatura de 640 px
   (`apps/snifim/services.py`); upload validado em `validators.py` (JPG/PNG/WEBP, até 8 MB).
   Arquivos vão para `media/snifim/<slug>/<capa|galeria|miniaturas|bagrut>/`.
+  Fotos acima de 50 MP são recusadas (proteção contra imagem feita para travar o servidor).
   **Foto de galeria e de Bagrut só aparece com `autorizada=True`** (LGPD). Marcar uma Bagrut
   como atual desmarca a anterior. Sem foto de capa, o topo usa `static/img/paginas/snifim.jpg`
   e, sem ela, fica vermelho. Sem história, aparece "em breve".

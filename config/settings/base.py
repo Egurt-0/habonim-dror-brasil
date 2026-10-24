@@ -10,6 +10,7 @@ env = environ.Env(
     DJANGO_DEBUG=(bool, False),
     DJANGO_ALLOWED_HOSTS=(list, []),
     DJANGO_CSRF_TRUSTED_ORIGINS=(list, []),
+    DJANGO_ATRAS_DE_PROXY=(bool, False),
 )
 environ.Env.read_env(BASE_DIR / ".env")
 
@@ -29,6 +30,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "axes",
     # apps do projeto
     "apps.contas",
     "apps.core",
@@ -45,6 +47,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "axes.middleware.AxesMiddleware",  # tem que ser o último
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -77,6 +80,25 @@ AUTH_USER_MODEL = "contas.User"
 LOGIN_URL = "contas:entrar"
 LOGIN_REDIRECT_URL = "core:home"
 LOGOUT_REDIRECT_URL = "core:home"
+
+AUTHENTICATION_BACKENDS = [
+    "axes.backends.AxesStandaloneBackend",  # recusa login de quem está bloqueado
+    "django.contrib.auth.backends.ModelBackend",
+]
+
+# Bloqueio após senhas erradas (django-axes), no login do site e no do admin.
+# Conta por e-mail + IP: errar a senha de alguém não bloqueia essa pessoa em outro lugar.
+AXES_FAILURE_LIMIT = 5
+AXES_COOLOFF_TIME = 1  # horas (o texto de contas/bloqueado.html fala em 1 hora)
+AXES_LOCKOUT_PARAMETERS = [["username", "ip_address"]]
+# O formulário de login do Django manda o e-mail no campo "username" (o padrão do axes seria
+# "email", o USERNAME_FIELD). Sem isto o e-mail não é registrado e a senha certa passaria.
+AXES_USERNAME_FORM_FIELD = "username"
+AXES_RESET_ON_SUCCESS = True
+AXES_LOCKOUT_TEMPLATE = "contas/bloqueado.html"
+AXES_CLIENT_IP_CALLABLE = "apps.contas.services.ip_do_cliente"
+# True só quando o site roda atrás de um proxy (nginx etc.) que preenche X-Forwarded-For.
+ATRAS_DE_PROXY = env("DJANGO_ATRAS_DE_PROXY")
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},

@@ -113,3 +113,22 @@ def test_rejeita_arquivo_que_nao_e_imagem():
 def test_rejeita_foto_grande_demais():
     with pytest.raises(ValidationError):
         validar_imagem(SimpleUploadedFile("enorme.jpg", b"0" * (9 * 1024 * 1024)))
+
+
+@pytest.mark.filterwarnings("ignore::PIL.Image.DecompressionBombWarning")
+def test_rejeita_foto_com_dimensoes_enormes():
+    """PNG de uma cor só: poucos KB, mas 10000×6000 pixels (60 MP) ao abrir."""
+    saida = BytesIO()
+    Image.new("1", (10_000, 6_000)).save(saida, "PNG")
+    assert len(saida.getvalue()) < 1024 * 1024
+    with pytest.raises(ValidationError, match="dimensões"):
+        validar_imagem(SimpleUploadedFile("bomba.png", saida.getvalue()))
+
+
+def test_rejeita_arquivo_com_extensao_de_imagem_que_nao_e_imagem():
+    with pytest.raises(ValidationError, match="não é uma imagem"):
+        validar_imagem(SimpleUploadedFile("falsa.jpg", b"<html>nao sou foto</html>"))
+
+
+def test_aceita_foto_normal():
+    validar_imagem(_foto())

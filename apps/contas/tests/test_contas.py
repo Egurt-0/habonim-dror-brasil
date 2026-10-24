@@ -48,8 +48,9 @@ class TestEntrada:
         assert resposta.url == reverse("core:home")
 
     def test_logout_nao_pergunta_de_novo_como_entrar(self, client):
-        User.objects.create_user(email="madrich@exemplo.com", password="senha-forte-123")
-        client.login(email="madrich@exemplo.com", password="senha-forte-123")
+        client.force_login(
+            User.objects.create_user(email="madrich@exemplo.com", password="senha-forte-123")
+        )
         client.post(reverse("contas:sair"))
         html = client.get(reverse("core:home")).content.decode()
         assert "Como você quer entrar?" not in html

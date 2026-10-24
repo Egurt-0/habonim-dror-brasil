@@ -1,8 +1,15 @@
 from django.core.exceptions import ImproperlyConfigured
 
 from .base import *  # noqa: F403
+from .seguranca import TAMANHO_MINIMO_CHAVE, chave_secreta_fraca
 
 DEBUG = False
+
+if chave_secreta_fraca(SECRET_KEY):  # noqa: F405
+    raise ImproperlyConfigured(
+        f"DJANGO_SECRET_KEY é a de exemplo ou fraca. Gere uma com pelo menos "
+        f"{TAMANHO_MINIMO_CHAVE} caracteres (ver .env.example)."
+    )
 
 # Em produção o endereço do admin tem que vir do ambiente; sem ele, o site não sobe.
 ADMIN_URL = env("DJANGO_ADMIN_URL").strip("/") + "/"  # noqa: F405

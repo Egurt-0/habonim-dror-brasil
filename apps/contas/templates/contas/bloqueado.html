@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block titulo %}Acesso bloqueado{% endblock %}
+
+{% block conteudo %}
+<div class="container container--estreito">
+  <div class="painel">
+    <h1>Acesso bloqueado</h1>
+    <p>Houve muitas tentativas de entrar com senha errada. Por segurança, o login desta conta
+      ficou bloqueado por 1 hora neste aparelho.</p>
+    <p>Se você esqueceu a senha, fale com quem administra o site do seu snif.</p>
+    <a class="botao" href="{% url 'core:home' %}">Voltar ao site</a>
+  </div>
+</div>
+{% endblock %}
