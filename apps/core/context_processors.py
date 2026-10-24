@@ -5,7 +5,7 @@ from apps.contas.services import ja_escolheu_entrada
 from . import imagens
 from .selectors import blocos
 
-SLOGAN_PADRAO = "80 anos formando líderes, construindo comunidade e conectando gerações."
+SLOGAN_PADRAO = "81 anos formando líderes, construindo comunidade e conectando gerações."
 
 
 def logos():

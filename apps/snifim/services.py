@@ -1,13 +1,15 @@
-"""Tratamento das fotos enviadas pelo admin: reduz o tamanho e gera miniaturas.
+"""Tratamento das fotos enviadas pelo admin: reduz o tamanho, gera miniaturas e apaga da
+pasta media os arquivos que deixaram de ser usados.
 
-Só age quando chega um arquivo novo (ainda não salvo no storage), então editar a legenda
-de uma foto não reprocessa a imagem.
+Só reprocessa quando chega um arquivo novo (ainda não salvo no storage), então editar a
+legenda de uma foto não mexe na imagem.
 """
 
 from io import BytesIO
 from pathlib import Path
 
 from django.core.files.base import ContentFile
+from django.db import transaction
 from PIL import Image, ImageOps
 
 LADO_MAXIMO = 1920
@@ -56,3 +58,47 @@ def preparar_foto_bagrut(bagrut):
 def preparar_foto_capa(snif):
     if _arquivo_novo(snif.foto_capa):
         _reduzir(snif.foto_capa)
+
+
+# Limpeza da pasta media: o Django não apaga o arquivo antigo quando uma foto é trocada,
+# removida ("Limpar" no admin) ou quando o registro é excluído. Os sinais ficam em signals.py.
+CAMPOS_DE_ARQUIVO = {
+    "Snif": ["foto_capa"],
+    "FotoSnif": ["imagem", "miniatura"],
+    "Bagrut": ["foto"],
+}
+
+
+def _campos(instancia):
+    return CAMPOS_DE_ARQUIVO.get(type(instancia).__name__, [])
+
+
+def _apagar_depois_do_commit(campo, nome):
+    """Apaga só quando a transação der certo (se o save falhar, o arquivo ainda é usado)."""
+    storage = campo.storage
+    transaction.on_commit(lambda: storage.delete(nome) if storage.exists(nome) else None)
+
+
+def lembrar_arquivos_atuais(instancia):
+    """Antes do save: guarda os nomes dos arquivos que estão no banco."""
+    if not instancia.pk:
+        instancia._arquivos_anteriores = {}
+        return
+    anterior = type(instancia).objects.filter(pk=instancia.pk).values(*_campos(instancia)).first()
+    instancia._arquivos_anteriores = anterior or {}
+
+
+def apagar_arquivos_substituidos(instancia):
+    """Depois do save: apaga os arquivos que foram trocados ou removidos."""
+    for nome_campo, nome_antigo in getattr(instancia, "_arquivos_anteriores", {}).items():
+        campo = getattr(instancia, nome_campo)
+        if nome_antigo and nome_antigo != campo.name:
+            _apagar_depois_do_commit(campo, nome_antigo)
+
+
+def apagar_arquivos(instancia):
+    """Depois de excluir o registro (inclusive em cascata, ao excluir o snif)."""
+    for nome_campo in _campos(instancia):
+        campo = getattr(instancia, nome_campo)
+        if campo.name:
+            _apagar_depois_do_commit(campo, campo.name)

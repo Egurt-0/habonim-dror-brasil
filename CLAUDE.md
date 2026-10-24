@@ -13,7 +13,7 @@ de divulgação define três argumentos centrais, que devem guiar texto e layout
 2. **Alcance**: chega a crianças sem escola judaica ou outras opções de educação judaica.
 3. **Impacto comunitário**: forma as lideranças que sustentam as pequenas comunidades.
 
-Slogan: **"80 anos formando líderes, construindo comunidade e conectando gerações."**
+Slogan: **"81 anos formando líderes, construindo comunidade e conectando gerações."**
 
 O site vai crescer. **Toda decisão deve facilitar adicionar features depois**, sem reescrever
 o que existe.
@@ -264,6 +264,8 @@ Na máquina de desenvolvimento atual, o Postgres 18 roda na porta **5433** (o 16
   **Foto de galeria e de Bagrut só aparece com `autorizada=True`** (LGPD). Marcar uma Bagrut
   como atual desmarca a anterior. Sem foto de capa, o topo usa `static/img/paginas/snifim.jpg`
   e, sem ela, fica vermelho. Sem história, aparece "em breve".
+  Foto trocada, removida ou excluída (também em cascata, ao excluir o snif) tem o arquivo
+  apagado da `media/` depois do commit (`services.py` + `signals.py`).
 
 URLs atuais: `/`, `/bases/`, `/shichavot-tzeirot/`, `/shichavot-bogrot/`, `/kehila-hd/`,
 `/snifim/`, `/snifim/<slug>/`, `/glossario/`, `/quero-saber-mais/`, `/contas/entrar/`, `/contas/sair/`, `/contas/sem-login/`
