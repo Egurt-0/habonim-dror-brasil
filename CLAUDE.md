@@ -237,7 +237,7 @@ ruff check . && ruff format .
 
 Na máquina de desenvolvimento atual, o Postgres 18 roda na porta **5433** (o 16 está na 5432).
 
-## Como o código está organizado (fase 1 pronta)
+## Como o código está organizado (fases 1 e 2 prontas)
 
 - **Textos institucionais** ficam no model `core.BlocoTexto`, buscados por `chave` via
   `apps.core.selectors.blocos(...)`. No template: `{% include "includes/secao.html" with bloco=blocos.x %}`.
@@ -257,9 +257,16 @@ Na máquina de desenvolvimento atual, o Postgres 18 roda na porta **5433** (o 16
   `templates/` (`base.html`, `includes/`). CSS em `static/css/site.css`, com as cores em
   variáveis no topo.
 - WhiteNoise (arquivos estáticos) só é ligado em `settings/prod.py`.
+- **Snifim (fase 2)**: tudo pelo admin, na tela de cada snif (Bagrut e galeria são inlines).
+  Fotos enviadas são reduzidas para 1920 px e a galeria ganha miniatura de 640 px
+  (`apps/snifim/services.py`); upload validado em `validators.py` (JPG/PNG/WEBP, até 8 MB).
+  Arquivos vão para `media/snifim/<slug>/<capa|galeria|miniaturas|bagrut>/`.
+  **Foto de galeria e de Bagrut só aparece com `autorizada=True`** (LGPD). Marcar uma Bagrut
+  como atual desmarca a anterior. Sem foto de capa, o topo usa `static/img/paginas/snifim.jpg`
+  e, sem ela, fica vermelho. Sem história, aparece "em breve".
 
 URLs atuais: `/`, `/bases/`, `/shichavot-tzeirot/`, `/shichavot-bogrot/`, `/kehila-hd/`,
-`/glossario/`, `/quero-saber-mais/`, `/contas/entrar/`, `/contas/sair/`, `/contas/sem-login/`
+`/snifim/`, `/snifim/<slug>/`, `/glossario/`, `/quero-saber-mais/`, `/contas/entrar/`, `/contas/sair/`, `/contas/sem-login/`
 e o admin no endereço definido em `DJANGO_ADMIN_URL` (ver `.env`).
 
 ## Contexto do movimento (resumo do material oficial)
@@ -321,7 +328,7 @@ Shnat por questão financeira.
 
 - [x] **Fase 1**: setup (Django + Postgres + custom user), páginas institucionais, glossário,
       Quero saber mais, entrada com "Entrar" / "Continuar sem login", login por e-mail
-- [ ] **Fase 2**: páginas dos snifim (galeria, Bagrut, história) editáveis pelo admin
+- [x] **Fase 2**: páginas dos snifim (galeria, Bagrut, história) editáveis pelo admin
 - [ ] **Fase 3**: login/cadastro, permissões por snif
 - [ ] **Fase 4**: doações (anônima + logada), webhook do gateway, ranking
 - [ ] Futuro: Censo, depoimentos enviados pelo site, API pública se necessário

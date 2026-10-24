@@ -20,6 +20,11 @@ Formatos aceitos: .jpg .jpeg .png .webp (logos tambem .svg)
 
 4) FOTO DO TOPO DE CADA PAGINA  ->  img/paginas/<nome>.jpg
    bases  shichavot-tzeirot  shichavot-bogrot  kehila-hd  glossario  quero-saber-mais
+   snifim  (topo da lista e de todo snif que ainda nao tem foto de capa)
    Ideal: 1920x800, menos de 400 KB.
+
+5) FOTOS DE CADA SNIF  ->  NAO vao aqui. Sobem pelo painel (admin), na tela do snif:
+   foto de capa, galeria e foto da Bagrut. O site reduz o tamanho sozinho.
+   Galeria e Bagrut so aparecem com "publicacao autorizada" marcado.
 
 Sem foto, o lugar fica em vermelho. Fotos com menores: so com autorizacao (LGPD).

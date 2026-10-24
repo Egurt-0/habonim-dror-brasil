@@ -13,7 +13,7 @@
     {% for snif in snifim %}
       <li class="snif-contato">
         <div>
-          <p class="snif-contato__nome">{{ snif.nome }}</p>
+          <p class="snif-contato__nome"><a href="{{ snif.get_absolute_url }}">{{ snif.nome }}</a></p>
           <p class="snif-contato__info">{% if snif.cidade != snif.nome %}{{ snif.cidade }} · {% endif %}{{ snif.estado }} · desde {{ snif.ano_fundacao }}</p>
         </div>
         {% if snif.instagram %}

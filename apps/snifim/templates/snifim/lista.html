@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load glossario %}
+
+{% block titulo %}Snifim{% endblock %}
+{% block descricao %}Os {{ snifim|length }} snifim do Habonim Dror Brasil: encontre o da sua cidade.{% endblock %}
+
+{% block conteudo %}
+{% include "includes/cabecalho_pagina.html" with pagina="snifim" sobretitulo="5 · Snifim" titulo=blocos.snifim_intro.titulo|default:"Snifim" %}
+
+<div class="container">
+  {% if blocos.snifim_intro.texto %}
+    <div class="container--texto snifim__intro texto">{{ blocos.snifim_intro.texto|com_glossario }}</div>
+  {% endif %}
+
+  <div class="topicos__grade snifim__grade">
+    {% for snif in snifim %}
+      <a class="topico{% if not snif.foto_capa %} topico--sem-foto{% endif %}" href="{{ snif.get_absolute_url }}"{% if snif.capa_url %} style="background-image: url('{{ snif.capa_url }}')"{% endif %}>
+        <span class="topico__num">desde {{ snif.ano_fundacao }}</span>
+        <span class="topico__corpo">
+          <span class="topico__titulo">{{ snif.nome }}</span>
+          <span class="topico__resumo">{% if snif.resumo %}{{ snif.resumo }}{% else %}{% if snif.cidade != snif.nome %}{{ snif.cidade }} · {% endif %}{{ snif.estado }}{% endif %}</span>
+          <span class="topico__mais">Conheça o snif <span aria-hidden="true">→</span></span>
+        </span>
+      </a>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

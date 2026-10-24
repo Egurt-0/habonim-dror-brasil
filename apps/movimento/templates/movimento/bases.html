@@ -48,7 +48,7 @@
         {% for ano, snifim_do_ano in linha_do_tempo %}
           <li>
             <span class="linha-do-tempo__ano">{{ ano }}</span>
-            <span class="linha-do-tempo__item">{% for snif in snifim_do_ano %}{{ snif.nome }}{% if not forloop.last %} e {% endif %}{% endfor %}</span>
+            <span class="linha-do-tempo__item">{% for snif in snifim_do_ano %}<a href="{{ snif.get_absolute_url }}">{{ snif.nome }}</a>{% if not forloop.last %} e {% endif %}{% endfor %}</span>
           </li>
         {% endfor %}
       </ol>
@@ -74,7 +74,7 @@
       {% include "includes/numeros.html" %}
       <h3>Os {{ snifim|length }} snifim</h3>
       <ul class="lista-snifim">
-        {% for snif in snifim %}<li>{{ snif.nome }} <span class="lista-snifim__uf">{{ snif.estado }}</span></li>{% endfor %}
+        {% for snif in snifim %}<li><a href="{{ snif.get_absolute_url }}">{{ snif.nome }} <span class="lista-snifim__uf">{{ snif.estado }}</span></a></li>{% endfor %}
       </ul>
       {% if blocos.rede_internacional.texto %}
         <h3>{{ blocos.rede_internacional.titulo }}</h3>

@@ -31,6 +31,7 @@ def site(request):
             ("Shichavot Tzeirot", reverse("movimento:st")),
             ("Shichavot Bogrot", reverse("movimento:sb")),
             ("Kehilá HD", reverse("movimento:kehila")),
+            ("Snifim", reverse("snifim:lista")),
             ("Glossário", reverse("glossario:lista")),
         ],
         "ja_escolheu_entrada": ja_escolheu_entrada(request),

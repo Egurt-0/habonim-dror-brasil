@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load glossario %}
+
+{% block titulo %}{{ snif.nome }}{% endblock %}
+{% block descricao %}{% if snif.resumo %}{{ snif.resumo }}{% else %}Habonim Dror {{ snif.nome }}: snif fundado em {{ snif.ano_fundacao }}.{% endif %}{% endblock %}
+
+{% block conteudo %}
+{% include "includes/cabecalho_pagina.html" with pagina="snifim" foto_url=snif.capa_url sobretitulo="5 · Snifim" titulo=snif.nome subtitulo=snif.resumo %}
+
+<div class="container snif">
+  <div class="snif__corpo">
+    <section class="secao" id="historia">
+      <h2>História</h2>
+      {% if snif.historia %}
+        <div class="texto">{{ snif.historia|com_glossario }}</div>
+      {% else %}
+        <p class="snif__breve">A história do snif {{ snif.nome }} será publicada em breve.</p>
+      {% endif %}
+    </section>
+
+    {% with bagrut=snif.bagrut_atual %}{% if bagrut %}
+      <section class="secao" id="bagrut">
+        <h2>Bagrut {{ bagrut.gestao }}</h2>
+        <p class="snif__nota">{{ "A Bagrut é o grupo de madrichim que gerencia o snif."|com_glossario_inline }}</p>
+        {% if bagrut.foto and bagrut.autorizada %}
+          <figure class="snif__bagrut-foto">
+            <img src="{{ bagrut.foto.url }}" alt="{{ bagrut.foto_alt|default:'Bagrut do snif' }}" loading="lazy">
+          </figure>
+        {% endif %}
+        {% if bagrut.descricao %}<div class="texto">{{ bagrut.descricao|com_glossario }}</div>{% endif %}
+      </section>
+    {% endif %}{% endwith %}
+
+    {% if snif.galeria %}
+      <section class="secao" id="galeria">
+        <h2>Galeria</h2>
+        <ul class="galeria">
+          {% for foto in snif.galeria %}
+            <li class="galeria__item">
+              <a href="{{ foto.imagem.url }}">
+                <img src="{% if foto.miniatura %}{{ foto.miniatura.url }}{% else %}{{ foto.imagem.url }}{% endif %}" alt="{{ foto.alt }}" loading="lazy">
+              </a>
+              {% if foto.legenda %}<p class="galeria__legenda">{{ foto.legenda|com_glossario_inline }}</p>{% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      </section>
+    {% endif %}
+
+    {% if snif.tem_cchd %}
+      <section class="secao secao--destaque" id="cchd">
+        <h2>CCHD {{ snif.nome }}</h2>
+        {% if snif.cchd_descricao %}
+          <div class="texto">{{ snif.cchd_descricao|com_glossario }}</div>
+        {% else %}
+          <p>{{ "Este snif mantém uma Casa de Cultura Habonim Dror (CCHD), espaço aberto à comunidade."|com_glossario_inline }}</p>
+        {% endif %}
+      </section>
+    {% endif %}
+  </div>
+
+  <aside class="snif__ficha" aria-label="Dados do snif">
+    <dl>
+      <div><dt>Fundação</dt><dd>{{ snif.ano_fundacao }}</dd></div>
+      <div><dt>Cidade</dt><dd>{{ snif.cidade }} · {{ snif.estado }}</dd></div>
+      {% if snif.kehila %}
+        <div>
+          <dt>Kehilá parceira</dt>
+          <dd>{% if snif.kehila.site %}<a href="{{ snif.kehila.site }}" rel="noopener" target="_blank">{{ snif.kehila.nome }}</a>{% else %}{{ snif.kehila.nome }}{% endif %}</dd>
+        </div>
+      {% endif %}
+      {% if snif.endereco %}<div><dt>Endereço</dt><dd>{{ snif.endereco }}</dd></div>{% endif %}
+      {% if snif.contato %}<div><dt>Contato</dt><dd>{{ snif.contato|urlize }}</dd></div>{% endif %}
+    </dl>
+    {% if snif.instagram %}
+      <a class="botao" href="{{ snif.instagram_url }}" rel="noopener" target="_blank">@{{ snif.instagram }}</a>
+    {% else %}
+      <p class="snif__breve">Instagram em breve</p>
+    {% endif %}
+  </aside>
+</div>
+
+<div class="container">
+  <div class="proximo">
+    <p>Conheça os outros snifim</p>
+    <a class="botao" href="{% url 'snifim:lista' %}">Todos os snifim</a>
+  </div>
+</div>
+{% endblock %}

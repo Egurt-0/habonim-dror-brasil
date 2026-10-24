@@ -1,5 +1,8 @@
-{% load static imagens %}{% foto_da_pagina pagina as foto %}
-<header class="cabecalho-pagina{% if not foto %} cabecalho-pagina--sem-foto{% endif %}"{% if foto %} style="background-image: url('{% static foto %}')"{% endif %}>
+{% load static imagens %}{% comment %}
+Parâmetros: pagina (nome da foto em static/img/paginas/), titulo, sobretitulo, subtitulo
+e foto_url (opcional: foto enviada pelo admin, que tem prioridade sobre a de static/).
+{% endcomment %}{% foto_da_pagina pagina as foto %}{% if foto %}{% static foto as foto_estatica %}{% endif %}{% firstof foto_url foto_estatica as fundo %}
+<header class="cabecalho-pagina{% if not fundo %} cabecalho-pagina--sem-foto{% endif %}"{% if fundo %} style="background-image: url('{{ fundo }}')"{% endif %}>
   <div class="cabecalho-pagina__veu" aria-hidden="true"></div>
   <div class="container cabecalho-pagina__conteudo">
     {% if sobretitulo %}<p class="sobretitulo">{{ sobretitulo }}</p>{% endif %}
