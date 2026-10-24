@@ -8,3 +8,14 @@ def _cache_limpo():
     cache.clear()
     yield
     cache.clear()
+
+
+@pytest.fixture
+def painel(client):
+    """Loga no painel como `user` (já passando pela verificação em duas etapas, se houver)."""
+
+    def entrar(user):
+        client.force_login(user)
+        return client
+
+    return entrar

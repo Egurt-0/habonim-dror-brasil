@@ -201,9 +201,15 @@ habonim-dror-brasil/
 - **Formulários de conta são `forms.Form` com lista fechada de campos.** Nunca ModelForm com
   `"__all__"` nem `**request.POST` em model: um POST com `is_staff=True` tem que ser ignorado.
 - Nenhuma página institucional exige login. Visitante anônimo navega e **pode doar** sem conta.
-- Permissões por grupo do Django: ex. `editor_nacional` (edita tudo) e `editor_snif` (edita só
-  o próprio snif). A ligação usuário ↔ snif entra na fase 3, junto com as permissões: é uma
-  migration comum, porque o custom user já existe.
+- **Permissões por grupo** (fase 3), definidas em código em `apps/contas/permissoes.py` e
+  recriadas a cada `migrate` (o que vale é o arquivo, não edição à mão no admin):
+  - `editor_nacional`: edita todo o conteúdo (core, glossário, movimento, snifim). **Não** mexe
+    em usuários, grupos nem permissões.
+  - `editor_snif`: só os snifim marcados em "snifim que edita" (`User.snifim`): texto, fotos,
+    Bagrut e contato. Nome, slug, cidade, ativo, kehilá e CCHD ficam só leitura. Outro snif
+    não aparece nem por link direto (`SnifAdmin.get_queryset`). Não cria nem apaga snif.
+  - Staff sem grupo não edita nada. Usuários e grupos: só superusuário.
+  - Novo model editável por snif? Acrescentar em `GRUPOS` e restringir o queryset no admin.
 
 ### Snifim
 
@@ -266,9 +272,10 @@ O admin **fica**: é por ele que o movimento edita todo o conteúdo sem programa
       Para desbloquear alguém: `python manage.py axes_reset_username <email>`.
 - [x] **Chave secreta**: `settings/prod.py` não sobe com a chave de exemplo ou fraca
       (`config/settings/seguranca.py`).
-- [ ] **Superusuário só para 1–2 pessoas**, usado apenas para configuração e emergências.
-      No dia a dia, contas de editor com permissões limitadas por grupo (`editor_nacional`,
+- [x] **Contas de editor com permissões limitadas por grupo** (`editor_nacional`,
       `editor_snif`); editor de snif só altera o próprio snif.
+- [ ] **Superusuário só para 1–2 pessoas**, usado apenas para configuração e emergências
+      (regra de uso: depende do movimento).
 - [ ] **HTTPS obrigatório** (já configurado em `settings/prod.py`: HSTS, cookies seguros,
       redirect para HTTPS).
 - [ ] Opcional: admin acessível só por IPs/VPN conhecidos.

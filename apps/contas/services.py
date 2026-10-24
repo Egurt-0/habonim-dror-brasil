@@ -191,6 +191,7 @@ def dados_do_usuario(user):
             "declarou_maioridade_em": _data(user.declarou_maioridade_em),
             "acesso_ao_painel": user.is_staff,
             "grupos": sorted(user.groups.values_list("name", flat=True)),
+            "snifim_que_edita": sorted(user.snifim.values_list("nome", flat=True)),
         },
         "registros_de_login": registros,
     }

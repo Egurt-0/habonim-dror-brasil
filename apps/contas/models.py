@@ -43,6 +43,15 @@ class User(AbstractUser):
     declarou_maioridade_em = models.DateTimeField(
         "declarou ter 18 anos ou mais em", null=True, blank=True, editable=False
     )
+    snifim = models.ManyToManyField(
+        "snifim.Snif",
+        verbose_name="snifim que edita",
+        related_name="editores",
+        blank=True,
+        help_text=(
+            "Para contas do grupo editor_snif: os snifim que esta pessoa pode editar no painel."
+        ),
+    )
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
