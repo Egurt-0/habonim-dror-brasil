@@ -155,3 +155,25 @@ def test_admin_nao_fica_em_barra_admin(client):
     assert settings.ADMIN_URL != "admin/"
     assert client.get("/admin/").status_code == 404
     assert client.get(f"/{settings.ADMIN_URL}").status_code == 302  # manda para o login
+
+
+def test_idade_do_movimento_e_calculada_pelo_ano():
+    from datetime import date
+
+    from apps.core.movimento import anos_de_movimento, com_anos
+
+    assert anos_de_movimento(date(2026, 10, 23)) == 81
+    assert anos_de_movimento(date(2027, 1, 1)) == 82
+    assert com_anos("sem marcador") == "sem marcador"
+    assert com_anos("{anos} anos") == f"{anos_de_movimento()} anos"
+
+
+@pytest.mark.django_db
+def test_paginas_mostram_a_idade_atual_e_nao_o_marcador(client):
+    from apps.core.movimento import anos_de_movimento
+
+    anos = anos_de_movimento()
+    for url in ["/", "/bases/"]:
+        html = client.get(url).content.decode()
+        assert "{anos}" not in html
+        assert f"{anos} anos" in html

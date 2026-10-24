@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block titulo %}{% endblock %}{% block titulo_sufixo %} · Habonim Dror Brasil{% endblock %}</title>
-  <meta name="description" content="{% block descricao %}Habonim Dror Brasil: uma rede nacional de educação judaica não formal, com 81 anos de história no Brasil.{% endblock %}">
+  <meta name="description" content="{% block descricao %}Habonim Dror Brasil: uma rede nacional de educação judaica não formal, com {{ anos_de_movimento }} anos de história no Brasil.{% endblock %}">
   <meta name="theme-color" content="#da221e">
   {% if logos.icone %}<link rel="icon" href="{% static logos.icone %}">{% endif %}
   <link rel="stylesheet" href="{% static 'css/site.css' %}">

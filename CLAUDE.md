@@ -13,7 +13,8 @@ de divulgação define três argumentos centrais, que devem guiar texto e layout
 2. **Alcance**: chega a crianças sem escola judaica ou outras opções de educação judaica.
 3. **Impacto comunitário**: forma as lideranças que sustentam as pequenas comunidades.
 
-Slogan: **"81 anos formando líderes, construindo comunidade e conectando gerações."**
+Slogan: **"{anos} anos formando líderes, construindo comunidade e conectando gerações."**
+(A idade é calculada pelo ano: 1945 → hoje. Em 2026, 81 anos.)
 
 O site vai crescer. **Toda decisão deve facilitar adicionar features depois**, sem reescrever
 o que existe.
@@ -249,6 +250,9 @@ Na máquina de desenvolvimento atual, o Postgres 18 roda na porta **5433** (o 16
   As formas reconhecidas vêm do campo `variantes` de cada `Termo`. **Todo texto vindo do banco
   que pode ter termos em hebraico deve passar por um dos dois filtros.**
 - O **slogan** vem do bloco `slogan` e fica disponível em todo template como `{{ slogan }}`.
+- **Idade do movimento nunca é escrita como número fixo.** Em texto do admin (blocos e
+  tópicos), use o marcador `{anos}`; em template, `{{ anos_de_movimento }}` ou o filtro
+  `{{ texto|com_anos }}`. Cálculo em `apps/core/movimento.py` (ano atual − 1945).
 - **Conteúdo inicial** está nas migrations `000X_conteudo_inicial.py` de cada app. Elas só criam
   o que não existe (`get_or_create`), então nunca sobrescrevem edições feitas no admin.
 - **Entrada**: `apps/contas/services.py` guarda na sessão a escolha "continuar sem login";

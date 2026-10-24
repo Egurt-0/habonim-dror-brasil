@@ -3,9 +3,10 @@ from django.urls import reverse
 from apps.contas.services import ja_escolheu_entrada
 
 from . import imagens
+from .movimento import anos_de_movimento, com_anos
 from .selectors import blocos
 
-SLOGAN_PADRAO = "81 anos formando líderes, construindo comunidade e conectando gerações."
+SLOGAN_PADRAO = "{anos} anos formando líderes, construindo comunidade e conectando gerações."
 
 
 def logos():
@@ -35,6 +36,7 @@ def site(request):
             ("Glossário", reverse("glossario:lista")),
         ],
         "ja_escolheu_entrada": ja_escolheu_entrada(request),
-        "slogan": blocos("slogan")["slogan"].titulo or SLOGAN_PADRAO,
+        "slogan": blocos("slogan")["slogan"].titulo or com_anos(SLOGAN_PADRAO),
+        "anos_de_movimento": anos_de_movimento(),
         "logos": logos(),
     }
