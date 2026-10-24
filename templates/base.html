@@ -35,7 +35,7 @@
         </ul>
         <div class="menu__acoes">
           {% if user.is_authenticated %}
-            <span class="menu__usuario">{{ user }}</span>
+            <a class="menu__usuario" href="{% url 'contas:meus_dados' %}">{{ user }}</a>
             <form method="post" action="{% url 'contas:sair' %}">
               {% csrf_token %}
               <button type="submit" class="botao botao--fantasma">Sair</button>

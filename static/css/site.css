@@ -103,7 +103,8 @@ a:hover { color: var(--vermelho-escuro); }
 .menu__acoes { display: flex; align-items: center; gap: 0.6rem; }
 .menu__acoes form { margin: 0; }
 .menu__acoes .botao { padding: 0.6rem 1rem; font-size: 0.72rem; }
-.menu__usuario { font-size: 0.8rem; color: var(--texto-suave); }
+.menu__usuario { font-size: 0.8rem; color: var(--texto-suave); text-underline-offset: 3px; }
+.menu__usuario:hover { color: var(--vermelho); }
 .topo__menu-botao { display: none; }
 
 @media (max-width: 1060px) {
@@ -428,3 +429,7 @@ main:not(:has(> .chamada:last-child)) + .rodape { margin-top: 5rem; }
   *, *::before, *::after { transition: none !important; animation: none !important; }
   .hero__foto { transform: none; }
 }
+.dados { margin: 1.5rem 0; }
+.dados div { padding: 0.6rem 0; border-bottom: 1px solid var(--borda); }
+.dados dt { font-weight: 800; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--vermelho); }
+.dados dd { margin: 0.2rem 0 0; overflow-wrap: anywhere; }

@@ -1,14 +1,19 @@
+import json
+
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth import logout
 from django.contrib.auth import views as auth_views
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import SetPasswordForm
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
 from . import services
-from .forms import CadastroForm, EsqueciSenhaForm
+from .forms import CadastroForm, EsqueciSenhaForm, ExcluirContaForm, MeusDadosForm
 
 
 class EntrarView(auth_views.LoginView):
@@ -74,6 +79,55 @@ class EsqueciSenhaView(auth_views.PasswordResetView):
     form_class = EsqueciSenhaForm
     template_name = "contas/esqueci_senha.html"
     success_url = reverse_lazy("contas:esqueci_senha_enviado")
+
+
+@login_required
+def meus_dados(request):
+    user = request.user
+    form = MeusDadosForm(
+        request.POST or None, initial={"first_name": user.first_name, "last_name": user.last_name}
+    )
+    if request.method == "POST" and form.is_valid():
+        user.first_name = form.cleaned_data["first_name"]
+        user.last_name = form.cleaned_data["last_name"]
+        user.save(update_fields=["first_name", "last_name"])
+        messages.success(request, "Dados atualizados.")
+        return redirect("contas:meus_dados")
+    contexto = {"form": form, "pode_excluir": services.pode_excluir_pelo_site(user)}
+    return render(request, "contas/meus_dados.html", contexto)
+
+
+@login_required
+def baixar_dados(request):
+    conteudo = json.dumps(services.dados_do_usuario(request.user), ensure_ascii=False, indent=2)
+    resposta = HttpResponse(conteudo, content_type="application/json; charset=utf-8")
+    resposta["Content-Disposition"] = 'attachment; filename="meus-dados-habonim-dror.json"'
+    return resposta
+
+
+@login_required
+def excluir_conta(request):
+    user = request.user
+    if not services.pode_excluir_pelo_site(user):
+        messages.error(request, "Contas do painel são excluídas por um administrador.")
+        return redirect("contas:meus_dados")
+    form = ExcluirContaForm(user, request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        logout(request)
+        services.excluir_conta(user)
+        messages.success(request, "Sua conta e seus dados foram excluídos.")
+        return redirect("core:home")
+    return render(request, "contas/excluir_conta.html", {"form": form})
+
+
+class TrocarSenhaView(auth_views.PasswordChangeView):
+    template_name = "contas/trocar_senha.html"
+    success_url = reverse_lazy("contas:meus_dados")
+
+    def form_valid(self, form):
+        resposta = super().form_valid(form)  # mantém a pessoa logada com a senha nova
+        messages.success(self.request, "Senha alterada.")
+        return resposta
 
 
 class RedefinirSenhaView(auth_views.PasswordResetConfirmView):

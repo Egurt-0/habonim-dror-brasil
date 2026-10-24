@@ -16,6 +16,10 @@ urlpatterns = [
         name="cadastro_enviado",
     ),
     path("ativar/<uidb64>/<token>/", views.AtivarContaView.as_view(), name="ativar"),
+    path("meus-dados/", views.meus_dados, name="meus_dados"),
+    path("meus-dados/baixar/", views.baixar_dados, name="baixar_dados"),
+    path("meus-dados/excluir/", views.excluir_conta, name="excluir_conta"),
+    path("senha/trocar/", views.TrocarSenhaView.as_view(), name="trocar_senha"),
     path("senha/esqueci/", views.EsqueciSenhaView.as_view(), name="esqueci_senha"),
     path(
         "senha/esqueci/enviado/",

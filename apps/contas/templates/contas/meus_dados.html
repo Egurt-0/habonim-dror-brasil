@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block titulo %}Meus dados{% endblock %}
+
+{% block conteudo %}
+<div class="container container--estreito">
+  <div class="painel">
+    <h1>Meus dados</h1>
+    <p class="painel__nota">Pela LGPD, você pode ver, corrigir, baixar e excluir seus dados a qualquer momento.
+      Veja a <a href="{% url 'core:privacidade' %}">política de privacidade</a>.</p>
+
+    <dl class="dados">
+      <div><dt>E-mail</dt><dd>{{ user.email }}</dd></div>
+      <div><dt>Conta criada em</dt><dd>{{ user.date_joined|date:"d/m/Y" }}</dd></div>
+      {% if user.aceitou_privacidade_em %}
+        <div><dt>Aceitou a política em</dt><dd>{{ user.aceitou_privacidade_em|date:"d/m/Y H:i" }}</dd></div>
+      {% endif %}
+    </dl>
+
+    <form method="post" class="formulario" novalidate>
+      {% csrf_token %}
+      {% include "includes/campo.html" with campo=form.first_name %}
+      {% include "includes/campo.html" with campo=form.last_name %}
+      <button type="submit" class="botao">Salvar</button>
+    </form>
+    <p class="painel__nota">Para trocar o e-mail da conta, fale com o encarregado pelos dados
+      (contato na <a href="{% url 'core:privacidade' %}#contato">política de privacidade</a>).</p>
+
+    <div class="painel__alternativa">
+      <p><a href="{% url 'contas:trocar_senha' %}">Trocar minha senha</a></p>
+      <p><a href="{% url 'contas:baixar_dados' %}">Baixar meus dados</a> (arquivo JSON com tudo o que o site guarda sobre você)</p>
+      {% if pode_excluir %}
+        <p><a href="{% url 'contas:excluir_conta' %}">Excluir minha conta</a></p>
+      {% else %}
+        <p class="painel__nota">Esta conta tem acesso ao painel: para excluí-la, fale com um administrador.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -185,7 +185,21 @@ habonim-dror-brasil/
 - A tela de escolha **não bloqueia o conteúdo**: links diretos (`/snifim/recife/`, vindos do
   Instagram ou do Google) abrem a página normalmente. Bloquear prejudicaria o SEO e quem chega
   por link.
-- Login por **e-mail** (não por username).
+- Login por **e-mail** (não por username), **sem diferenciar maiúsculas** (constraint
+  `Lower(email)` + `get_by_natural_key` com `iexact`).
+- **Cadastro (fase 3, decidido):**
+  - **Só maiores de 18 anos** (declaração no cadastro, com data gravada em
+    `declarou_maioridade_em`) e **aceite da política** (`aceitou_privacidade_em`).
+  - **Fechado** até as doações existirem: `DJANGO_CADASTRO_ABERTO=False` no `.env`.
+  - **A senha não é pedida no cadastro**: a conta nasce inativa e sem senha, e a pessoa cria
+    a senha pelo link enviado ao e-mail (uso único, 1 dia). Assim ninguém cadastra o e-mail
+    de outra pessoa com uma senha que conhece.
+  - O formulário **nunca revela se um e-mail já tem conta** (mesma resposta sempre; quem já
+    tem conta recebe um e-mail avisando). Máximo de 3 e-mails por endereço por hora.
+  - Links de e-mail usam `DJANGO_SITE_URL`, **nunca o Host da requisição** (forjável).
+  - E-mail: em dev sai no terminal; em produção, `EMAIL_URL` no `.env` (qualquer SMTP).
+- **Formulários de conta são `forms.Form` com lista fechada de campos.** Nunca ModelForm com
+  `"__all__"` nem `**request.POST` em model: um POST com `is_staff=True` tem que ser ignorado.
 - Nenhuma página institucional exige login. Visitante anônimo navega e **pode doar** sem conta.
 - Permissões por grupo do Django: ex. `editor_nacional` (edita tudo) e `editor_snif` (edita só
   o próprio snif). A ligação usuário ↔ snif entra na fase 3, junto com as permissões: é uma
@@ -333,7 +347,8 @@ Na máquina de desenvolvimento atual, o Postgres 18 roda na porta **5433** (o 16
 URLs atuais: `/`, `/bases/`, `/shichavot-tzeirot/`, `/shichavot-bogrot/`, `/kehila-hd/`,
 `/snifim/`, `/snifim/<slug>/`, `/glossario/`, `/privacidade/`, `/quero-saber-mais/`, `/contas/entrar/`,
 `/contas/sair/`, `/contas/sem-login/`, `/contas/cadastro/`, `/contas/ativar/<uid>/<token>/`,
-`/contas/senha/esqueci/`, `/contas/senha/redefinir/<uid>/<token>/`
+`/contas/senha/esqueci/`, `/contas/senha/redefinir/<uid>/<token>/`, `/contas/senha/trocar/`,
+`/contas/meus-dados/` (+ `baixar/` e `excluir/`)
 e o admin no endereço definido em `DJANGO_ADMIN_URL` (ver `.env`).
 
 ## Contexto do movimento (resumo do material oficial)

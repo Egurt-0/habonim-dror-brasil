@@ -146,3 +146,64 @@ def cadastrar(first_name, email):
             "contas/emails/conta_existente.txt",
             {"user": existente, "link": settings.SITE_URL + reverse("contas:esqueci_senha")},
         )
+
+
+# Meus dados (LGPD, art. 18) ----------------------------------------------------------------
+
+
+def _registros_de_login(email):
+    from axes.models import AccessAttempt, AccessFailureLog, AccessLog
+
+    return [
+        (model, model.objects.filter(username__iexact=email))
+        for model in (AccessAttempt, AccessFailureLog, AccessLog)
+    ]
+
+
+def _data(valor):
+    return valor.isoformat() if valor else None
+
+
+def dados_do_usuario(user):
+    """Tudo o que o site guarda sobre a pessoa, para o arquivo "baixar meus dados".
+
+    Ao criar um model novo ligado ao usuário (doações, snifim que edita...), acrescentar aqui.
+    """
+    registros = []
+    for model, consulta in _registros_de_login(user.email):
+        for r in consulta.order_by("-attempt_time"):
+            registros.append(
+                {
+                    "tipo": str(model._meta.verbose_name),
+                    "data": _data(r.attempt_time),
+                    "ip": r.ip_address,
+                    "navegador": r.user_agent,
+                }
+            )
+    return {
+        "conta": {
+            "email": user.email,
+            "nome": user.first_name,
+            "sobrenome": user.last_name,
+            "criada_em": _data(user.date_joined),
+            "ultimo_login": _data(user.last_login),
+            "aceitou_privacidade_em": _data(user.aceitou_privacidade_em),
+            "declarou_maioridade_em": _data(user.declarou_maioridade_em),
+            "acesso_ao_painel": user.is_staff,
+            "grupos": sorted(user.groups.values_list("name", flat=True)),
+        },
+        "registros_de_login": registros,
+    }
+
+
+def pode_excluir_pelo_site(user):
+    """Contas do painel (staff) são excluídas por um administrador, para o movimento não ficar
+    sem acesso por engano."""
+    return not user.is_staff and not user.is_superuser
+
+
+def excluir_conta(user):
+    """Apaga a conta e os registros de login ligados ao e-mail (direito de eliminação)."""
+    for _, consulta in _registros_de_login(user.email):
+        consulta.delete()
+    user.delete()

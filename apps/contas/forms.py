@@ -29,6 +29,29 @@ class CadastroForm(forms.Form):
     )
 
 
+class MeusDadosForm(forms.Form):
+    first_name = forms.CharField(label="Nome", max_length=150)
+    last_name = forms.CharField(label="Sobrenome", max_length=150, required=False)
+
+
+class ExcluirContaForm(forms.Form):
+    senha = forms.CharField(
+        label="Sua senha, para confirmar",
+        strip=False,
+        widget=forms.PasswordInput(attrs={"autocomplete": "current-password"}),
+    )
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+
+    def clean_senha(self):
+        senha = self.cleaned_data["senha"]
+        if not self.user.check_password(senha):
+            raise forms.ValidationError("Senha incorreta.")
+        return senha
+
+
 class EsqueciSenhaForm(PasswordResetForm):
     """O formulário do Django, com limite de envios por e-mail e link montado com SITE_URL.
 

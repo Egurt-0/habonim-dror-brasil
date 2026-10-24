@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block titulo %}Trocar senha{% endblock %}
+
+{% block conteudo %}
+<div class="container container--estreito">
+  <div class="painel">
+    <h1>Trocar senha</h1>
+    <form method="post" class="formulario" novalidate>
+      {% csrf_token %}
+      {% include "includes/campo.html" with campo=form.old_password %}
+      {% include "includes/campo.html" with campo=form.new_password1 %}
+      {% include "includes/campo.html" with campo=form.new_password2 %}
+      <button type="submit" class="botao botao--grande">Salvar nova senha</button>
+    </form>
+    <p class="painel__nota"><a href="{% url 'contas:meus_dados' %}">Voltar</a></p>
+  </div>
+</div>
+{% endblock %}
