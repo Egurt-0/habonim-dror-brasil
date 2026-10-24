@@ -70,10 +70,11 @@ A fazer, por fase:
       `priv_encarregado` (e-mail de contato); informar o CNPJ do movimento como controlador;
       agendar o `limpar_dados_pessoais` no cron; guardar fora do site os termos de
       autorização de imagem assinados pelos responsáveis.
-- [ ] **Fase 3 (contas):** aceite da política no cadastro (com data registrada);
-      menores de 18 só com consentimento de um responsável ou sem cadastro (decidir);
-      página "meus dados" com baixar (portabilidade), corrigir e **excluir a conta**;
-      e-mail de confirmação; 2FA para staff.
+- [x] **Fase 3 (contas):** aceite da política e declaração de maioridade no cadastro
+      (datas gravadas); **só maiores de 18**; confirmação por e-mail; "meus dados" com
+      corrigir, baixar (portabilidade) e **excluir a conta**; 2FA para staff.
+- [ ] Troca de e-mail pelo próprio usuário (com confirmação no e-mail novo). Hoje é pedida
+      ao encarregado.
 - [ ] **Fase 4 (doações):** ranking só por opt-in explícito; definir o prazo de guarda das
       doações (obrigação fiscal) e anonimizar o que não precisa ficar; contrato/termos de
       tratamento com o gateway de pagamento; atualizar a política.
@@ -265,7 +266,12 @@ O admin **fica**: é por ele que o movimento edita todo o conteúdo sem programa
 - [x] **URL não óbvia** para o admin: vem de `DJANGO_ADMIN_URL` no `.env` (`/admin/` dá 404).
       Em produção a variável é obrigatória e `admin/`/`painel-dev/` são recusados.
       **Nunca escrever o endereço real em código, commit ou documentação.**
-- [ ] **2FA obrigatório** para qualquer conta com `is_staff` (`django-otp` / `django-two-factor-auth`).
+- [x] **2FA obrigatório** para qualquer conta com `is_staff` (`django-otp`): o painel
+      (`apps/contas/painel.py`) só abre com senha **e** código do aplicativo autenticador ou
+      um dos 10 códigos de recuperação (uso único). No primeiro acesso a pessoa configura;
+      quem já tem 2FA precisa passar por ele para trocar de celular. QR gerado localmente.
+      Perdeu celular e códigos: um superusuário apaga os dispositivos dela no painel
+      (OTP TOTP / OTP Static) e ela configura de novo.
 - [x] **Bloqueio após tentativas erradas** de login, no site e no admin (`django-axes`):
       5 erros por e-mail + IP bloqueiam por 1 hora. Atrás de proxy (nginx), ligar
       `DJANGO_ATRAS_DE_PROXY=True`, senão todo mundo conta como o mesmo IP.
@@ -317,7 +323,7 @@ ruff check . && ruff format .
 
 Na máquina de desenvolvimento atual, o Postgres 18 roda na porta **5433** (o 16 está na 5432).
 
-## Como o código está organizado (fases 1 e 2 prontas)
+## Como o código está organizado (fases 1, 2 e 3 prontas)
 
 - **Textos institucionais** ficam no model `core.BlocoTexto`, buscados por `chave` via
   `apps.core.selectors.blocos(...)`. No template: `{% include "includes/secao.html" with bloco=blocos.x %}`.
@@ -348,6 +354,9 @@ Na máquina de desenvolvimento atual, o Postgres 18 roda na porta **5433** (o 16
   **Foto de galeria e de Bagrut só aparece com `autorizada=True`** (LGPD). Marcar uma Bagrut
   como atual desmarca a anterior. Sem foto de capa, o topo usa `static/img/paginas/snifim.jpg`
   e, sem ela, fica vermelho. Sem história, aparece "em breve".
+- **Contas (fase 3)**: regras em `apps/contas/services.py` (cadastro, e-mails, meus dados),
+  grupos em `permissoes.py`, 2FA em `dois_fatores.py` + `painel.py`. Nos testes, a fixture
+  `painel(user)` (conftest.py) já entra no admin com o 2FA verificado.
   Foto trocada, removida ou excluída (também em cascata, ao excluir o snif) tem o arquivo
   apagado da `media/` depois do commit (`services.py` + `signals.py`).
 
@@ -420,7 +429,7 @@ Shnat por questão financeira.
 - [x] **Fase 1**: setup (Django + Postgres + custom user), páginas institucionais, glossário,
       Quero saber mais, entrada com "Entrar" / "Continuar sem login", login por e-mail
 - [x] **Fase 2**: páginas dos snifim (galeria, Bagrut, história) editáveis pelo admin
-- [ ] **Fase 3**: login/cadastro, permissões por snif
+- [x] **Fase 3**: cadastro (fechado por enquanto), meus dados, permissões por snif, 2FA
 - [ ] **Fase 4**: doações (anônima + logada), webhook do gateway, ranking
 - [ ] Futuro: Censo, depoimentos enviados pelo site, API pública se necessário
 - [ ] Infra: escolher domínio e VPS; HTTPS; backups do Postgres e da pasta de mídia

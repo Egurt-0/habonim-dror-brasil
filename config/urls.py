@@ -3,10 +3,6 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 
-admin.site.site_header = "Habonim Dror Brasil"
-admin.site.site_title = "Painel HDBR"
-admin.site.index_title = "Conteúdo do site"
-
 urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
     path("contas/", include("apps.contas.urls")),

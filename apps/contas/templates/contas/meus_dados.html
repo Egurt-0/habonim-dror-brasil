@@ -28,6 +28,9 @@
 
     <div class="painel__alternativa">
       <p><a href="{% url 'contas:trocar_senha' %}">Trocar minha senha</a></p>
+      {% if user.is_staff %}
+        <p><a href="{% url 'contas:configurar_2fa' %}?next={% url 'contas:meus_dados' %}">Verificação em duas etapas: trocar de celular ou gerar novos códigos de recuperação</a></p>
+      {% endif %}
       <p><a href="{% url 'contas:baixar_dados' %}">Baixar meus dados</a> (arquivo JSON com tudo o que o site guarda sobre você)</p>
       {% if pode_excluir %}
         <p><a href="{% url 'contas:excluir_conta' %}">Excluir minha conta</a></p>

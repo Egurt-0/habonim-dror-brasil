@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block titulo %}Verificação em duas etapas{% endblock %}
+
+{% block conteudo %}
+<div class="container container--estreito">
+  <div class="painel">
+    <h1>Verificação em duas etapas</h1>
+    <p class="painel__nota">Abra o aplicativo autenticador no celular e digite o código de 6 números.
+      Sem o celular? Use um dos códigos de recuperação.</p>
+    <form method="post" class="formulario" novalidate>
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}">
+      {% include "includes/campo.html" with campo=form.codigo %}
+      <button type="submit" class="botao botao--grande">Entrar no painel</button>
+    </form>
+    <p class="painel__nota">Perdeu o celular e os códigos? Peça a um administrador para zerar a sua verificação.</p>
+  </div>
+</div>
+{% endblock %}

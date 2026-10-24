@@ -17,6 +17,8 @@ urlpatterns = [
     ),
     path("ativar/<uidb64>/<token>/", views.AtivarContaView.as_view(), name="ativar"),
     path("meus-dados/", views.meus_dados, name="meus_dados"),
+    path("dois-fatores/", views.verificar_2fa, name="verificar_2fa"),
+    path("dois-fatores/configurar/", views.configurar_2fa, name="configurar_2fa"),
     path("meus-dados/baixar/", views.baixar_dados, name="baixar_dados"),
     path("meus-dados/excluir/", views.excluir_conta, name="excluir_conta"),
     path("senha/trocar/", views.TrocarSenhaView.as_view(), name="trocar_senha"),

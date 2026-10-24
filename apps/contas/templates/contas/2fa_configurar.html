@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block titulo %}Configurar verificação em duas etapas{% endblock %}
+
+{% block conteudo %}
+<div class="container container--estreito">
+  <div class="painel">
+    <h1>Proteja sua conta</h1>
+    <p>Para entrar no painel, além da senha, é preciso um código do celular. Assim, quem descobrir sua senha não consegue entrar.</p>
+    <ol class="passos">
+      <li>Instale um aplicativo autenticador (Google Authenticator, Microsoft Authenticator, Authy ou 2FAS).</li>
+      <li>No aplicativo, escolha adicionar conta e leia o QR code abaixo.</li>
+      <li>Digite o código de 6 números que aparecer no aplicativo.</li>
+    </ol>
+    <figure class="qr">{{ qr|safe }}</figure>
+    <p class="painel__nota">Não consegue ler o QR? Digite esta chave no aplicativo:<br><code class="chave">{{ chave }}</code></p>
+    <form method="post" class="formulario" novalidate>
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}">
+      {% include "includes/campo.html" with campo=form.codigo %}
+      <button type="submit" class="botao botao--grande">Ativar</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

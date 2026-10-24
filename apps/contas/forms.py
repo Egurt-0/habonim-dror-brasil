@@ -52,6 +52,16 @@ class ExcluirContaForm(forms.Form):
         return senha
 
 
+class CodigoForm(forms.Form):
+    codigo = forms.CharField(
+        label="Código",
+        max_length=20,
+        widget=forms.TextInput(
+            attrs={"autocomplete": "one-time-code", "autocapitalize": "off", "spellcheck": "false"}
+        ),
+    )
+
+
 class EsqueciSenhaForm(PasswordResetForm):
     """O formulário do Django, com limite de envios por e-mail e link montado com SITE_URL.
 

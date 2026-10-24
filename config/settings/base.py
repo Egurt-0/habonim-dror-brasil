@@ -25,13 +25,16 @@ CSRF_TRUSTED_ORIGINS = env("DJANGO_CSRF_TRUSTED_ORIGINS")
 ADMIN_URL = env("DJANGO_ADMIN_URL", default="painel-dev/").strip("/") + "/"
 
 INSTALLED_APPS = [
-    "django.contrib.admin",
+    "apps.contas.painel.PainelAdminConfig",  # django.contrib.admin com 2FA obrigatório
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "axes",
+    "django_otp",
+    "django_otp.plugins.otp_totp",
+    "django_otp.plugins.otp_static",
     # apps do projeto
     "apps.contas",
     "apps.core",
@@ -46,6 +49,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django_otp.middleware.OTPMiddleware",  # request.user.is_verified() (2FA)
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "axes.middleware.AxesMiddleware",  # tem que ser o último
@@ -86,6 +90,9 @@ AUTHENTICATION_BACKENDS = [
     "axes.backends.AxesStandaloneBackend",  # recusa login de quem está bloqueado
     "django.contrib.auth.backends.ModelBackend",
 ]
+
+# 2FA do painel (apps/contas/dois_fatores.py): nome que aparece no aplicativo autenticador.
+OTP_TOTP_ISSUER = "Habonim Dror Brasil"
 
 # Cadastro público: pronto, mas fechado até as doações existirem (fase 4). Ver CLAUDE.md.
 CADASTRO_ABERTO = env("DJANGO_CADASTRO_ABERTO")

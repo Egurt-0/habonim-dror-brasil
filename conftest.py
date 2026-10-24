@@ -12,10 +12,16 @@ def _cache_limpo():
 
 @pytest.fixture
 def painel(client):
-    """Loga no painel como `user` (já passando pela verificação em duas etapas, se houver)."""
+    """Loga no painel como `user`, já passando pela verificação em duas etapas."""
+    from django_otp import DEVICE_ID_SESSION_KEY
+    from django_otp.plugins.otp_static.models import StaticDevice
 
     def entrar(user):
+        device = StaticDevice.objects.create(user=user, name="teste", confirmed=True)
         client.force_login(user)
+        sessao = client.session
+        sessao[DEVICE_ID_SESSION_KEY] = device.persistent_id
+        sessao.save()
         return client
 
     return entrar

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block titulo %}Códigos de recuperação{% endblock %}
+
+{% block conteudo %}
+<div class="container container--estreito">
+  <div class="painel">
+    <h1>Guarde estes códigos</h1>
+    <p>A verificação em duas etapas está ativa. Se você perder o celular, cada código abaixo
+      serve <strong>uma vez</strong> no lugar do código do aplicativo.</p>
+    <p><strong>Eles só aparecem agora.</strong> Anote em papel ou guarde no gerenciador de senhas.</p>
+    <ul class="codigos">
+      {% for codigo in codigos %}<li><code>{{ codigo }}</code></li>{% endfor %}
+    </ul>
+    <a class="botao botao--grande" href="{{ next }}">Já guardei, ir para o painel</a>
+  </div>
+</div>
+{% endblock %}
