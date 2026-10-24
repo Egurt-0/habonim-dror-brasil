@@ -22,7 +22,12 @@
       <button type="submit" class="botao botao--grande">Entrar</button>
     </form>
 
-    <p class="painel__nota">O cadastro de novas contas abre em breve.</p>
+    <p class="painel__nota"><a href="{% url 'contas:esqueci_senha' %}">Esqueci minha senha</a></p>
+    {% if cadastro_aberto %}
+      <p class="painel__nota">Ainda não tem conta? <a href="{% url 'contas:cadastro' %}">Criar conta</a> (maiores de 18 anos).</p>
+    {% else %}
+      <p class="painel__nota">O cadastro de novas contas abre em breve.</p>
+    {% endif %}
     <p class="painel__nota">Veja como tratamos seus dados na <a href="{% url 'core:privacidade' %}">política de privacidade</a>.</p>
 
     <div class="painel__alternativa">

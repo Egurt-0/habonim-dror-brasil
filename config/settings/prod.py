@@ -16,6 +16,13 @@ ADMIN_URL = env("DJANGO_ADMIN_URL").strip("/") + "/"  # noqa: F405
 if ADMIN_URL in ("admin/", "painel-dev/"):
     raise ImproperlyConfigured("DJANGO_ADMIN_URL precisa ser um endereço difícil de adivinhar.")
 
+# Links dos e-mails precisam do endereço real do site.
+SITE_URL = env("DJANGO_SITE_URL").rstrip("/")  # noqa: F405
+if not SITE_URL.startswith("https://"):
+    raise ImproperlyConfigured("DJANGO_SITE_URL precisa ser o endereço https:// do site.")
+if CADASTRO_ABERTO and EMAIL_BACKEND.endswith("console.EmailBackend"):  # noqa: F405
+    raise ImproperlyConfigured("Com o cadastro aberto, configure EMAIL_URL para enviar e-mails.")
+
 # WhiteNoise serve os arquivos estáticos em produção (logo depois do SecurityMiddleware).
 MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")  # noqa: F405
 

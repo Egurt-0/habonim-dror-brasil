@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block titulo %}Veja seu e-mail{% endblock %}
+
+{% block conteudo %}
+<div class="container container--estreito">
+  <div class="painel">
+    <h1>Veja seu e-mail</h1>
+    <p>Se existir uma conta com esse endereço, você vai receber um link para criar uma nova senha. O link vale por 1 dia.</p>
+    <a class="botao" href="{% url 'contas:entrar' %}">Voltar para o login</a>
+  </div>
+</div>
+{% endblock %}

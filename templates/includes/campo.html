@@ -1,0 +1,8 @@
+{% comment %}Campo de formulário: label, input, ajuda e erros. Checkbox vem com a label ao lado.{% endcomment %}{% if campo.widget_type == "checkbox" %}
+<label class="formulario__check">{{ campo }} <span>{{ campo.label }}{% if link %} (<a href="{{ link }}" target="_blank" rel="noopener">ler</a>){% endif %}</span></label>
+{% else %}
+<label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+{{ campo }}
+{% if campo.help_text %}<div class="formulario__ajuda">{{ campo.help_text }}</div>{% endif %}
+{% endif %}
+{% for erro in campo.errors %}<p class="formulario__erro" role="alert">{{ erro }}</p>{% endfor %}

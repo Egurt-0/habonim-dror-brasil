@@ -1,0 +1,12 @@
+{% autoescape off %}Olá{% if user.first_name %}, {{ user.first_name }}{% endif %}!
+
+Recebemos um pedido para criar uma nova senha da sua conta no site do Habonim Dror Brasil.
+Abra o link abaixo para escolher a nova senha (vale por 1 dia):
+
+{{ link }}
+
+Se não foi você, ignore este e-mail. Sua senha continua a mesma.
+
+Habonim Dror Brasil
+{{ site_url }}
+{% endautoescape %}

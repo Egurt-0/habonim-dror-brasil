@@ -11,6 +11,7 @@ env = environ.Env(
     DJANGO_ALLOWED_HOSTS=(list, []),
     DJANGO_CSRF_TRUSTED_ORIGINS=(list, []),
     DJANGO_ATRAS_DE_PROXY=(bool, False),
+    DJANGO_CADASTRO_ABERTO=(bool, False),
 )
 environ.Env.read_env(BASE_DIR / ".env")
 
@@ -85,6 +86,22 @@ AUTHENTICATION_BACKENDS = [
     "axes.backends.AxesStandaloneBackend",  # recusa login de quem está bloqueado
     "django.contrib.auth.backends.ModelBackend",
 ]
+
+# Cadastro público: pronto, mas fechado até as doações existirem (fase 4). Ver CLAUDE.md.
+CADASTRO_ABERTO = env("DJANGO_CADASTRO_ABERTO")
+
+# Endereço público do site, usado nos links dos e-mails (nunca o Host da requisição, que
+# pode ser forjado).
+SITE_URL = env("DJANGO_SITE_URL", default="http://localhost:8000").rstrip("/")
+
+# E-mail: em desenvolvimento sai no terminal. Em produção, EMAIL_URL no .env
+# (ex.: smtp+tls://usuario:senha@smtp.servidor.com:587).
+vars().update(env.email_url("EMAIL_URL", default="consolemail://"))
+DEFAULT_FROM_EMAIL = env(
+    "DJANGO_DEFAULT_FROM_EMAIL", default="Habonim Dror Brasil <nao-responda@localhost>"
+)
+# Validade dos links de ativação de conta e de nova senha.
+PASSWORD_RESET_TIMEOUT = 60 * 60 * 24  # 1 dia
 
 # Bloqueio após senhas erradas (django-axes), no login do site e no do admin.
 # Conta por e-mail + IP: errar a senha de alguém não bloqueia essa pessoa em outro lugar.

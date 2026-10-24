@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
+from django.db.models.functions import Lower
 
 
 class UserManager(BaseUserManager):
@@ -12,6 +13,10 @@ class UserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         return user
+
+    def get_by_natural_key(self, email):
+        # Login sem diferenciar maiúsculas: "Pessoa@Exemplo.com" e "pessoa@exemplo.com" são a mesma.
+        return self.get(email__iexact=email)
 
     def create_user(self, email, password=None, **extra_fields):
         extra_fields.setdefault("is_staff", False)
@@ -31,6 +36,13 @@ class User(AbstractUser):
 
     username = None
     email = models.EmailField("e-mail", unique=True)
+    # LGPD: quando a pessoa aceitou a política e declarou ter 18 anos ou mais (cadastro).
+    aceitou_privacidade_em = models.DateTimeField(
+        "aceitou a política de privacidade em", null=True, blank=True, editable=False
+    )
+    declarou_maioridade_em = models.DateTimeField(
+        "declarou ter 18 anos ou mais em", null=True, blank=True, editable=False
+    )
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
@@ -40,6 +52,7 @@ class User(AbstractUser):
     class Meta:
         verbose_name = "usuário"
         verbose_name_plural = "usuários"
+        constraints = [models.UniqueConstraint(Lower("email"), name="email_unico_sem_maiusculas")]
 
     def __str__(self):
         return self.get_full_name() or self.email

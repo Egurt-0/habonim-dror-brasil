@@ -1,0 +1,12 @@
+{% autoescape off %}Olá, {{ user.first_name }}!
+
+Alguém tentou criar uma conta com este e-mail no site do Habonim Dror Brasil, mas você já tem uma.
+Se esqueceu a senha, peça uma nova aqui:
+
+{{ link }}
+
+Se não foi você, ignore este e-mail. Sua conta continua como estava.
+
+Habonim Dror Brasil
+{{ site_url }}
+{% endautoescape %}

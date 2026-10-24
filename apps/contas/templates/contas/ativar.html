@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block titulo %}Criar senha{% endblock %}
+
+{% block conteudo %}
+<div class="container container--estreito">
+  <div class="painel">
+    <h1>Criar senha</h1>
+    {% if validlink %}
+      <p class="painel__nota">Último passo: escolha a senha da sua conta.</p>
+      <form method="post" class="formulario" novalidate>
+        {% csrf_token %}
+        {% include "includes/campo.html" with campo=form.new_password1 %}
+        {% include "includes/campo.html" with campo=form.new_password2 %}
+        <button type="submit" class="botao botao--grande">Ativar conta</button>
+      </form>
+    {% else %}
+      <p>Este link não vale mais: ele já foi usado ou passou de 1 dia.</p>
+      <a class="botao" href="{% url 'contas:cadastro' %}">Pedir um novo link</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

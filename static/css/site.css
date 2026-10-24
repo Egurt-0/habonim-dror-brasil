@@ -399,6 +399,10 @@ details[open] summary { margin-bottom: 1rem; }
 .formulario input { font: inherit; padding: 0.8rem 0.9rem; border: 2px solid var(--borda); border-radius: var(--raio); background: var(--branco); }
 .formulario input:focus { outline: none; border-color: var(--vermelho); }
 .formulario .botao { margin-top: 1.25rem; }
+.formulario input[type="checkbox"] { width: 1.15rem; height: 1.15rem; padding: 0; margin: 0.15rem 0 0; accent-color: var(--vermelho); flex: none; }
+.formulario__check { display: flex; gap: 0.6rem; align-items: flex-start; font-weight: 400; font-size: 0.95rem; text-transform: none; letter-spacing: 0; }
+.formulario__ajuda { font-size: 0.82rem; color: var(--texto-suave); }
+.formulario__ajuda ul { margin: 0.25rem 0 0; padding-left: 1.1rem; }
 .formulario__erro { background: var(--erro-fundo); color: var(--erro-texto); padding: 0.7rem 0.9rem; font-size: 0.95rem; }
 .painel__nota { font-size: 0.9rem; color: var(--texto-suave); margin: 1.25rem 0 0; }
 .painel__alternativa { border-top: 1px solid var(--borda); margin-top: 2rem; padding-top: 1.5rem; }

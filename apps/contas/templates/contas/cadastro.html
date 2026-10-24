@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block titulo %}Criar conta{% endblock %}
+
+{% block conteudo %}
+<div class="container container--estreito">
+  <div class="painel">
+    <h1>Criar conta</h1>
+    {% if fechado %}
+      <p>O cadastro de novas contas abre em breve. Para conhecer a tnuá você não precisa de conta.</p>
+      <a class="botao" href="{% url 'core:home' %}">Voltar ao site</a>
+    {% else %}
+      <p class="painel__nota">A conta é opcional e só para maiores de 18 anos. Depois de enviar, você recebe um e-mail para criar sua senha.</p>
+      <form method="post" class="formulario" novalidate>
+        {% csrf_token %}
+        {% include "includes/campo.html" with campo=form.first_name %}
+        {% include "includes/campo.html" with campo=form.email %}
+        {% include "includes/campo.html" with campo=form.maior_de_idade %}
+        {% url 'core:privacidade' as url_privacidade %}
+        {% include "includes/campo.html" with campo=form.aceite link=url_privacidade %}
+        <button type="submit" class="botao botao--grande">Criar conta</button>
+      </form>
+      <p class="painel__nota">Já tem conta? <a href="{% url 'contas:entrar' %}">Entrar</a></p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% autoescape off %}Olá, {{ user.first_name }}!
+
+Recebemos um pedido de cadastro com este e-mail no site do Habonim Dror Brasil.
+Para criar sua senha e ativar a conta, abra o link abaixo (vale por 1 dia):
+
+{{ link }}
+
+Se não foi você, ignore este e-mail: sem a senha, a conta não é ativada.
+
+Habonim Dror Brasil
+{{ site_url }}
+{% endautoescape %}

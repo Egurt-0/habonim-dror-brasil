@@ -331,7 +331,9 @@ Na máquina de desenvolvimento atual, o Postgres 18 roda na porta **5433** (o 16
   apagado da `media/` depois do commit (`services.py` + `signals.py`).
 
 URLs atuais: `/`, `/bases/`, `/shichavot-tzeirot/`, `/shichavot-bogrot/`, `/kehila-hd/`,
-`/snifim/`, `/snifim/<slug>/`, `/glossario/`, `/privacidade/`, `/quero-saber-mais/`, `/contas/entrar/`, `/contas/sair/`, `/contas/sem-login/`
+`/snifim/`, `/snifim/<slug>/`, `/glossario/`, `/privacidade/`, `/quero-saber-mais/`, `/contas/entrar/`,
+`/contas/sair/`, `/contas/sem-login/`, `/contas/cadastro/`, `/contas/ativar/<uid>/<token>/`,
+`/contas/senha/esqueci/`, `/contas/senha/redefinir/<uid>/<token>/`
 e o admin no endereço definido em `DJANGO_ADMIN_URL` (ver `.env`).
 
 ## Contexto do movimento (resumo do material oficial)
