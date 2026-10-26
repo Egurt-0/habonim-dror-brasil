@@ -273,6 +273,17 @@ a:hover { color: var(--vermelho-escuro); }
   .numero__valor { font-size: 2.6rem; }
 }
 
+/* Enquadramento de fotos específicas (casadas pelo nome do arquivo no style="").
+   Valores medidos para que um rosto deformado por IA fique sob o título/texto.
+   Trocou a foto? Apague o bloco dela. */
+/* Fundo da home de Curitiba: rosto sob "HABONIM DROR BRASIL" no desktop (1024–1920 px); em tela
+   em pé (celular, tablet) mostra o lado direito da foto, com a placa, e o rosto fica fora. */
+.hero__foto[style*="habonim_dror_cwb"] { background-position: 30% 31%; }
+@media (max-aspect-ratio: 1/1) { .hero__foto[style*="habonim_dror_cwb"] { background-position: 100% 50%; } }
+/* Card de Curitiba na lista de snifim: leve zoom para o rosto ficar sob o nome do snif */
+.topico[style*="img/snifim/curitiba."] { background-size: auto 140%; background-position: 50% 5%; }
+@media (max-width: 600px) { .topico[style*="img/snifim/curitiba."] { background-size: auto 110%; background-position: 50% 10%; } }
+
 /* Chamada final: fundo branco com a logo completa */
 .chamada { background: var(--branco); border-top: 1px solid var(--borda); text-align: center; padding: clamp(4rem, 9vw, 6.5rem) 0; }
 .chamada__logo { display: block; width: clamp(160px, 22vw, 240px); height: auto; margin: 0 auto 2rem; }
