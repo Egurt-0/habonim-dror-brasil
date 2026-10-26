@@ -1,3 +1,5 @@
+import re
+
 import pytest
 
 from apps.glossario.models import Termo
@@ -10,7 +12,7 @@ class TestTextoComGlossario:
         html = texto_com_glossario("Todo snif tem madrichim.")
         assert 'href="/glossario/#snif"' in html
         assert 'href="/glossario/#madrich"' in html
-        assert 'data-definicao="Núcleo local do movimento em uma cidade."' in html
+        assert ">Núcleo local do movimento em uma cidade.</span>" in html
 
     def test_so_a_primeira_ocorrencia_e_ligada(self):
         html = texto_com_glossario("O snif e os snifim.")
@@ -25,7 +27,7 @@ class TestTextoComGlossario:
 
     def test_prefere_a_forma_mais_longa(self):
         html = texto_com_glossario("A Shnat Hachshará dura um ano.")
-        assert ">Shnat Hachshará</a>" in html
+        assert ">Shnat Hachshará<span" in html
 
     def test_escapa_html_do_banco(self):
         html = texto_com_glossario('<script>alert("x")</script> snif')
@@ -42,13 +44,20 @@ class TestTextoComGlossario:
         )
         html = texto_com_glossario("Festa de Ha'shaná.")
         assert 'href="/glossario/#rosh"' in html
-        assert "Ha&#x27;shaná</a>" in html
+        assert "Ha&#x27;shaná<span" in html
 
     def test_nao_casa_dentro_de_entidade_html(self):
         Termo.objects.create(termo="Amp", slug="amp", definicao="x", variantes="amp, quot")
         html = texto_com_glossario('Pão & "vinho"')
         assert "&amp;" in html and "&quot;vinho&quot;" in html
         assert 'class="termo"' not in html
+
+    def test_definicao_ligada_ao_termo_para_leitor_de_tela(self):
+        html = texto_com_glossario("O snif e a tnuá.")
+        ids = re.findall(r'aria-describedby="([^"]+)"', html)
+        assert len(ids) == 2 and len(set(ids)) == 2
+        for id_def in ids:
+            assert f'id="{id_def}" role="tooltip"' in html
 
     def test_inline_nao_cria_paragrafo(self):
         html = texto_com_glossario("Solelim e snif.", paragrafos=False)

@@ -9,6 +9,14 @@
   {% if logos.icone %}<link rel="icon" href="{% static logos.icone %}">{% endif %}
   <link rel="stylesheet" href="{% static 'css/site.css' %}">
   <script src="{% static 'js/site.js' %}" defer></script>
+  <noscript><style>
+    /* Sem JavaScript o botão "Menu" não funciona: no celular, o menu fica sempre aberto. */
+    .topo__menu-botao { display: none !important; }
+    @media (max-width: 1060px) {
+      .topo__barra { flex-wrap: wrap; padding-bottom: 1rem; }
+      .menu { display: flex; position: static; padding: 0; border: 0; width: 100%; }
+    }
+  </style></noscript>
 </head>
 <body>
   <a class="pular" href="#conteudo">Pular para o conteúdo</a>

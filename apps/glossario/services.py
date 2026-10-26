@@ -1,8 +1,13 @@
+from itertools import count
+
 from django.urls import reverse
 from django.utils.html import escape, linebreaks
 from django.utils.safestring import mark_safe
 
 from .selectors import formas_do_glossario
+
+# Cada definição precisa de um id único na página (aria-describedby); um contador basta.
+_ids = count(1)
 
 
 def texto_com_glossario(texto, paragrafos=True):
@@ -25,9 +30,12 @@ def texto_com_glossario(texto, paragrafos=True):
                 continue
             ja_ligados.add(slug)
             partes.append(escape(texto[inicio : match.start()]))
+            id_def = f"termo-def-{next(_ids)}"
             partes.append(
-                f'<a class="termo" href="{url}#{slug}" data-definicao="{escape(definicao)}">'
-                f"{escape(match.group(0))}</a>"
+                f'<a class="termo" href="{url}#{slug}" aria-describedby="{id_def}">'
+                f"{escape(match.group(0))}"
+                f'<span class="termo__definicao" id="{id_def}" role="tooltip" aria-hidden="true">'
+                f"{escape(definicao)}</span></a>"
             )
             inicio = match.end()
         partes.append(escape(texto[inicio:]))

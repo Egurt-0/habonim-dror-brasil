@@ -13,8 +13,8 @@
   --texto: #161616;
   --texto-suave: #5c5c5c;
   --borda: #e8e1e2;
-  --foco: #161616;
-  --texto-sobre-vermelho: #ffe3e7;
+  --foco: #161616;  /* trocado por branco nas áreas escuras (ver "Foco") */
+  --texto-sobre-vermelho: #fff5f6;  /* 4,65:1 sobre --vermelho (WCAG AA) */
   --veu: rgb(20 4 8 / 0.55);
   --erro-fundo: #fdecea;
   --erro-texto: #8a1c13;
@@ -50,6 +50,8 @@ h3 { font-size: 1.2rem; margin: 1.75rem 0 0.5rem; letter-spacing: -0.01em; line-
 a { color: var(--vermelho); }
 a:hover { color: var(--vermelho-escuro); }
 :focus-visible { outline: 3px solid var(--foco); outline-offset: 3px; }
+/* Foco: nas áreas vermelhas ou com foto, o contorno é branco para continuar visível */
+.hero, .faixa, .cabecalho-pagina, .secao--destaque, .proximo, .rodape { --foco: var(--branco); }
 
 .container { width: 100%; max-width: var(--largura); margin: 0 auto; padding: 0 1.25rem; }
 .container--texto { max-width: calc(var(--largura-texto) + 2.5rem); }
@@ -189,7 +191,7 @@ a:hover { color: var(--vermelho-escuro); }
 .faixa { background: var(--vermelho); color: var(--branco); padding: clamp(2.5rem, 6vw, 4rem) 0; }
 .numeros { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; }
 .numero { display: flex; flex-direction: column; }
-.numero__prefixo { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.14em; font-weight: 700; opacity: 0.85; }
+.numero__prefixo { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.14em; font-weight: 700; color: var(--texto-sobre-vermelho); }
 .numero__valor { font-size: clamp(3rem, 6vw, 4.5rem); font-weight: 900; line-height: 1; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
 .numero__rotulo { font-size: 0.95rem; margin-top: 0.4rem; color: var(--texto-sobre-vermelho); }
 .faixa .termo { color: var(--branco); text-decoration-color: var(--branco); }
@@ -227,10 +229,10 @@ a:hover { color: var(--vermelho-escuro); }
 .topico--sem-foto:nth-child(3n) { background: var(--texto); }
 .topico--sem-foto::before { background: none; }
 .topico--sem-foto::after { background: var(--branco); }
-.topico__num { font-size: 0.85rem; font-weight: 800; letter-spacing: 0.12em; opacity: 0.85; }
+.topico__num { font-size: 0.85rem; font-weight: 800; letter-spacing: 0.12em; color: var(--texto-sobre-vermelho); }
 .topico__corpo { display: flex; flex-direction: column; gap: 0.6rem; }
 .topico__titulo { font-size: clamp(1.5rem, 2.4vw, 1.9rem); font-weight: 900; line-height: 1.05; text-transform: uppercase; letter-spacing: -0.02em; }
-.topico__resumo { font-size: 0.98rem; line-height: 1.5; color: rgb(255 255 255 / 0.88); max-width: 34ch; }
+.topico__resumo { font-size: 0.98rem; line-height: 1.5; color: var(--texto-sobre-vermelho); max-width: 34ch; }
 .topico__mais {
   display: inline-flex; gap: 0.5rem; margin-top: 0.5rem;
   font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em;
@@ -340,16 +342,17 @@ details[open] summary { margin-bottom: 1rem; }
 
 /* Termo do glossário no texto corrido */
 .termo { position: relative; color: inherit; text-decoration: underline dotted var(--vermelho); text-decoration-thickness: 2px; text-underline-offset: 4px; cursor: help; }
-.termo::after {
-  content: attr(data-definicao);
-  position: absolute; left: 50%; bottom: calc(100% + 10px); transform: translateX(-50%);
-  width: max-content; max-width: min(280px, 80vw);
-  background: var(--texto); color: var(--branco);
+/* A definição é um <span> de verdade (leitores de tela a recebem por aria-describedby).
+   --desloca é calculado no site.js para a caixa não sair da tela perto das bordas. */
+.termo__definicao {
+  position: absolute; left: 50%; bottom: calc(100% + 10px); transform: translateX(calc(-50% + var(--desloca, 0px)));
+  width: max-content; max-width: min(280px, calc(100vw - 2rem));
+  background: var(--texto); color: var(--branco); text-align: left; white-space: normal;
   font-size: 0.85rem; line-height: 1.45; font-weight: 500; text-transform: none; letter-spacing: 0;
   padding: 0.6rem 0.8rem; border-left: 3px solid var(--vermelho);
-  opacity: 0; pointer-events: none; transition: opacity 0.15s; z-index: 15;
+  opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.15s, visibility 0.15s; z-index: 15;
 }
-.termo:hover::after, .termo:focus-visible::after, .termo.ativo::after { opacity: 1; }
+.termo:hover .termo__definicao, .termo:focus-visible .termo__definicao, .termo.ativo .termo__definicao { opacity: 1; visibility: visible; }
 
 /* Quero saber mais */
 .snifim-contato { list-style: none; padding: 0; margin: 2.5rem 0; display: grid; border-top: 2px solid var(--texto); }
