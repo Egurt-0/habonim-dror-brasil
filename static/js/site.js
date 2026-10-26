@@ -69,6 +69,75 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 7000);
   }
 
+  // Fotos com um ponto a esconder (CSS --esconder-x/--esconder-y, frações da foto): posiciona
+  // a foto para esse ponto ficar sob as letras do título, na tela de quem está vendo.
+  const tamanhos = new Map();
+  const tamanhoDaFoto = (url) => {
+    if (!tamanhos.has(url)) {
+      tamanhos.set(url, new Promise((ok) => {
+        const img = new Image();
+        img.onload = () => ok([img.naturalWidth, img.naturalHeight]);
+        img.onerror = () => ok(null);
+        img.src = url;
+      }));
+    }
+    return tamanhos.get(url);
+  };
+  const ZOOMS = [1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6];
+  const esconderPonto = async (el) => {
+    el.style.backgroundSize = "";
+    el.style.backgroundPosition = "";
+    const css = getComputedStyle(el);
+    const fx = parseFloat(css.getPropertyValue("--esconder-x"));
+    const fy = parseFloat(css.getPropertyValue("--esconder-y"));
+    // O navegador devolve url("..."); o nome do arquivo pode ter parênteses, ex.: "foto (1).png"
+    const url = (css.backgroundImage.match(/^url\("(.*)"\)$/) || [])[1];
+    if (Number.isNaN(fx) || Number.isNaN(fy) || !url) return;
+    const tamanho = await tamanhoDaFoto(url);
+    if (!tamanho) return;
+    const [iw, ih] = tamanho;
+    const caixa = el.closest(".hero") || el;  // a foto do hero tem transform; mede o hero
+    const texto = el.classList.contains("hero__foto")
+      ? caixa.querySelector(".hero__titulo")
+      : el.querySelector(".topico__titulo, h1");
+    if (!texto) return;
+    const r = caixa.getBoundingClientRect();
+    const intervalo = document.createRange();
+    intervalo.selectNodeContents(texto);
+    const linhas = [...intervalo.getClientRects()];
+    for (const zoom of ZOOMS) {
+      const escala = Math.max(r.width / iw, r.height / ih) * zoom;
+      const w = iw * escala, h = ih * escala, px = fx * w, py = fy * h;
+      const yNatural = (r.height - h) / 2 + py;
+      // Meio das letras maiúsculas de cada linha, da linha mais perto do ponto para a mais longe
+      const alvos = linhas
+        .map((l) => ({ l, y: l.top - r.top + l.height * 0.56 }))
+        .sort((a, b) => Math.abs(a.y - yNatural) - Math.abs(b.y - yNatural));
+      for (const { l, y } of alvos) {
+        const deslocY = y - py;
+        if (deslocY > 0 || deslocY < r.height - h) continue;
+        const xMin = Math.max(l.left - r.left + l.width * 0.1, r.width - w + px);
+        const xMax = Math.min(l.right - r.left - l.width * 0.1, px);
+        if (xMin > xMax) continue;
+        const x = Math.min(xMax, Math.max(xMin, (r.width - w) / 2 + px));
+        el.style.backgroundSize = `${w}px ${h}px`;
+        el.style.backgroundPosition = `${x - px}px ${deslocY}px`;
+        return;
+      }
+    }
+    // Sem posição possível: fica o enquadramento do CSS.
+  };
+  const esconderPontos = () => {
+    document.querySelectorAll(".hero__foto, .topico, .cabecalho-pagina").forEach(esconderPonto);
+  };
+  esconderPontos();
+  if (document.fonts) document.fonts.ready.then(esconderPontos);
+  let espera;
+  window.addEventListener("resize", () => {
+    clearTimeout(espera);
+    espera = setTimeout(esconderPontos, 150);
+  });
+
   // Termos do glossário: a caixa da definição é empurrada para dentro da tela perto das bordas.
   const MARGEM = 12;
   const posicionar = (termo) => {

@@ -273,14 +273,17 @@ a:hover { color: var(--vermelho-escuro); }
   .numero__valor { font-size: 2.6rem; }
 }
 
-/* Enquadramento de fotos específicas (casadas pelo nome do arquivo no style="").
-   Valores medidos para que um rosto deformado por IA fique sob o título/texto.
+/* Ponto a esconder em fotos específicas (casadas pelo nome do arquivo no style="").
+   --esconder-x/--esconder-y: posição do ponto na foto (0 a 1, da esquerda e do topo).
+   O site.js mede o título na tela de quem visita e posiciona a foto (com zoom leve se
+   preciso) para o ponto ficar sob as letras. Os background-* abaixo valem só sem JavaScript.
    Trocou a foto? Apague o bloco dela. */
-/* Fundo da home de Curitiba: rosto sob "HABONIM DROR BRASIL" no desktop (1024–1920 px); em tela
-   em pé (celular, tablet) mostra o lado direito da foto, com a placa, e o rosto fica fora. */
+/* Curitiba (fundo da home, card e topo do snif): rosto deformado por IA */
+.hero__foto[style*="habonim_dror_cwb"],
+.topico[style*="img/snifim/curitiba."],
+.cabecalho-pagina[style*="img/snifim/curitiba."] { --esconder-x: 0.337; --esconder-y: 0.515; }
 .hero__foto[style*="habonim_dror_cwb"] { background-position: 30% 31%; }
 @media (max-aspect-ratio: 1/1) { .hero__foto[style*="habonim_dror_cwb"] { background-position: 100% 50%; } }
-/* Card de Curitiba na lista de snifim: leve zoom para o rosto ficar sob o nome do snif */
 .topico[style*="img/snifim/curitiba."] { background-size: auto 140%; background-position: 50% 5%; }
 @media (max-width: 600px) { .topico[style*="img/snifim/curitiba."] { background-size: auto 110%; background-position: 50% 10%; } }
 
