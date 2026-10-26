@@ -5,7 +5,11 @@
 {% block titulo_sufixo %}{% endblock %}
 {% block imagem_compartilhar %}{% if fotos_fundo %}{% static fotos_fundo.0 %}{% else %}{{ block.super }}{% endif %}{% endblock %}
 
-{% block cabeca %}<script type="application/ld+json">{{ dados_estruturados }}</script>{% endblock %}
+{% block cabeca %}
+  {# A 1ª foto do hero é um background: sem o preload o navegador só a descobre depois do CSS. #}
+  {% if fotos_fundo %}<link rel="preload" as="image" href="{% static fotos_fundo.0 %}" fetchpriority="high">{% endif %}
+  <script type="application/ld+json">{{ dados_estruturados }}</script>
+{% endblock %}
 
 {% block conteudo %}
 <section class="hero{% if not fotos_fundo %} hero--sem-foto{% endif %}">

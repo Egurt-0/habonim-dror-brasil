@@ -25,7 +25,7 @@
         <p class="snif__nota">{{ "A Bagrut é o grupo de madrichim que gerencia o snif."|com_glossario_inline }}</p>
         {% if bagrut.foto and bagrut.autorizada %}
           <figure class="snif__bagrut-foto">
-            <img src="{{ bagrut.foto.url }}" alt="{{ bagrut.foto_alt|default:'Bagrut do snif' }}" loading="lazy">
+            <img src="{{ bagrut.foto.url }}" alt="{{ bagrut.foto_alt|default:'Bagrut do snif' }}" loading="lazy" decoding="async">
           </figure>
         {% endif %}
         {% if bagrut.descricao %}<div class="texto">{{ bagrut.descricao|com_glossario }}</div>{% endif %}
@@ -39,7 +39,7 @@
           {% for foto in snif.galeria %}
             <li class="galeria__item">
               <a href="{{ foto.imagem.url }}">
-                <img src="{% if foto.miniatura %}{{ foto.miniatura.url }}{% else %}{{ foto.imagem.url }}{% endif %}" alt="{{ foto.alt }}" loading="lazy">
+                <img src="{% if foto.miniatura %}{{ foto.miniatura.url }}{% else %}{{ foto.imagem.url }}{% endif %}" alt="{{ foto.alt }}" loading="lazy" decoding="async">
               </a>
               {% if foto.legenda %}<p class="galeria__legenda">{{ foto.legenda|com_glossario_inline }}</p>{% endif %}
             </li>
