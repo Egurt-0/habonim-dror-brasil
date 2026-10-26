@@ -25,6 +25,13 @@ def test_snif_inativo_some_do_site(client):
 
 
 @pytest.mark.django_db
+def test_todo_snif_vem_com_instagram(client):
+    assert not Snif.objects.filter(instagram="").exists()
+    html = client.get(reverse("snifim:detalhe", args=["bahia"])).content.decode()
+    assert "https://www.instagram.com/drorzinhoba/" in html
+
+
+@pytest.mark.django_db
 def test_instagram_preenchido_vira_link(client):
     Snif.objects.filter(slug="recife").update(instagram="habonimrecife")
     html = client.get(reverse("snifim:saber_mais")).content.decode()

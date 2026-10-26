@@ -416,7 +416,8 @@ principalmente via **bolsas**. O objetivo é que nenhum jovem deixe de ir a uma 
 Shnat por questão financeira.
 
 ### Pendências de conteúdo (usar placeholder até chegar)
-- Instagram de cada snif e da conta nacional, mais o link do site oficial
+- Instagram da conta nacional e link do site oficial (os dos 10 snifim já estão na
+  migration `snifim/0005_instagram_dos_snifim.py`)
 - História, fotos e foto da Bagrut de cada snif
 - 3 depoimentos (ex-chaver, madrich atual, kehilá parceira)
 - Texto e mecanismo do **Censo**
