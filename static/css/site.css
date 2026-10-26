@@ -391,6 +391,17 @@ details[open] summary { margin-bottom: 1rem; }
 .galeria__item a:hover img { transform: scale(1.04); }
 .galeria__legenda { margin: 0.4rem 0 0; font-size: 0.85rem; color: var(--texto-suave); line-height: 1.4; }
 
+/* Páginas de erro (404 e 500) */
+.erro { padding: clamp(4rem, 12vw, 8rem) 0; }
+.erro__texto { font-size: 1.2rem; color: var(--texto-suave); max-width: 46ch; margin: 0 0 2.5rem; }
+.erro__acoes { display: flex; flex-wrap: wrap; gap: 0.9rem; }
+.erro--grave { --foco: var(--branco); min-height: 100svh; display: flex; align-items: center; background: var(--vermelho); color: var(--branco); }
+.erro--grave h1, .erro--grave .sobretitulo { color: var(--branco); }
+.erro--grave .erro__texto { color: var(--texto-sobre-vermelho); }
+.erro--grave .botao { background: var(--branco); border-color: var(--branco); color: var(--vermelho); }
+.erro--grave .botao:hover { background: transparent; color: var(--branco); }
+.erro__semel { display: block; width: 72px; height: auto; margin-bottom: 1.75rem; }
+
 /* Privacidade */
 .privacidade__data { margin: 3rem 0 0; color: var(--texto-suave); font-size: 0.85rem; }
 

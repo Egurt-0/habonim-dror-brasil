@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block titulo %}Página não encontrada{% endblock %}
+{% block descricao %}Esta página não existe ou mudou de endereço.{% endblock %}
+
+{% block conteudo %}
+<section class="erro">
+  <div class="container container--texto">
+    <p class="sobretitulo">Erro 404</p>
+    <h1>Página não encontrada</h1>
+    <p class="erro__texto">O endereço pode ter mudado ou estar escrito errado. Que tal começar por aqui?</p>
+    <div class="erro__acoes">
+      <a class="botao botao--grande" href="{% url 'core:home' %}">Página inicial</a>
+      <a class="botao botao--grande botao--claro" href="{% url 'snifim:lista' %}">Snifim</a>
+      <a class="botao botao--grande botao--claro" href="{% url 'snifim:saber_mais' %}">Quero saber mais</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

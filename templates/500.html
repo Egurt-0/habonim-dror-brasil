@@ -1,0 +1,26 @@
+{% load static %}<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Erro no site · Habonim Dror Brasil</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#da221e">
+  <link rel="icon" href="{% static 'img/logos/semel-circulo.png' %}">
+  <link rel="stylesheet" href="{% static 'css/site.css' %}">
+</head>
+<body>
+  {% comment %}Página independente: no erro 500 o Django não passa request nem context processors, e o problema pode ser o próprio banco.{% endcomment %}
+  <main class="erro erro--grave">
+    <div class="container container--texto">
+      <img class="erro__semel" src="{% static 'img/logos/semel-branco.png' %}" alt="">
+      <p class="sobretitulo">Erro 500</p>
+      <h1>Algo deu errado do nosso lado</h1>
+      <p class="erro__texto">Já estamos sabendo. Tente de novo em alguns minutos.</p>
+      <div class="erro__acoes">
+        <a class="botao botao--grande" href="/">Voltar para a página inicial</a>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
