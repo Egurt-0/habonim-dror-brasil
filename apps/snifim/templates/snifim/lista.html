@@ -14,7 +14,7 @@
 
   <div class="topicos__grade snifim__grade">
     {% for snif in snifim %}
-      <a class="topico{% if not snif.foto_capa %} topico--sem-foto{% endif %}" href="{{ snif.get_absolute_url }}"{% if snif.capa_url %} style="background-image: url('{{ snif.capa_url }}')"{% endif %}>
+      <a class="topico{% if not snif.capa_url %} topico--sem-foto{% endif %}" href="{{ snif.get_absolute_url }}"{% if snif.capa_url %} style="background-image: url('{{ snif.capa_url }}')"{% endif %}>
         <span class="topico__num">desde {{ snif.ano_fundacao }}</span>
         <span class="topico__corpo">
           <span class="topico__titulo">{{ snif.nome }}</span>

@@ -1,5 +1,8 @@
 from django.db import models, transaction
+from django.templatetags.static import static
 from django.urls import reverse
+
+from apps.core import imagens
 
 from .validators import validar_imagem
 
@@ -139,7 +142,11 @@ class Snif(models.Model):
 
     @property
     def capa_url(self):
-        return self.foto_capa.url if self.foto_capa else ""
+        """Foto do banner: a enviada pelo painel ou, sem ela, static/img/snifim/<slug>.jpg."""
+        if self.foto_capa:
+            return self.foto_capa.url
+        foto = imagens.achar(f"img/snifim/{self.slug}")
+        return static(foto) if foto else ""
 
     @property
     def instagram_url(self):

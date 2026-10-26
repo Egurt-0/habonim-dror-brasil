@@ -38,8 +38,11 @@ resposta mudar algo, **atualizar a política de privacidade** (blocos `priv_*`) 
 
 Regras:
 - **Coletar o mínimo.** Nenhum campo "por via das dúvidas". Dado que não é usado não entra.
-- **Menores:** foto (galeria, Bagrut, capa) só aparece com `autorizada=True`, marcada só com
+- **Menores:** foto de galeria e de Bagrut só aparece com `autorizada=True`, marcada só com
   autorização de pelo menos um dos pais/responsáveis. Nomes de menores escondidos por padrão.
+  **Banner (capa) do snif não tem essa trava, por decisão do dono do projeto (2026-10-26):**
+  quem sobe a foto garante que ela tem autorização ou que ninguém é identificável (pessoas de
+  costas ou de longe). Vale o mesmo para as fotos de `static/img/`.
   Contatos publicados são **institucionais** do snif, nunca o número pessoal de um menor.
 - **Sem terceiros que recebam o IP do visitante sem necessidade:** nada de Google Fonts,
   Analytics, pixels ou embeds (ex.: post do Instagram embutido). Link simples para fora pode.
@@ -352,8 +355,10 @@ Na máquina de desenvolvimento atual, o Postgres 18 roda na porta **5433** (o 16
   Arquivos vão para `media/snifim/<slug>/<capa|galeria|miniaturas|bagrut>/`.
   Fotos acima de 50 MP são recusadas (proteção contra imagem feita para travar o servidor).
   **Foto de galeria e de Bagrut só aparece com `autorizada=True`** (LGPD). Marcar uma Bagrut
-  como atual desmarca a anterior. Sem foto de capa, o topo usa `static/img/paginas/snifim.jpg`
-  e, sem ela, fica vermelho. Sem história, aparece "em breve".
+  como atual desmarca a anterior. **Banner do snif** (`Snif.capa_url`, topo da página e card
+  da lista): foto de capa do painel; sem ela, `static/img/snifim/<slug>.jpg`; sem ela,
+  `static/img/paginas/snifim.jpg` (só no topo); sem nenhuma, vermelho. Sem história,
+  aparece "em breve".
 - **Contas (fase 3)**: regras em `apps/contas/services.py` (cadastro, e-mails, meus dados),
   grupos em `permissoes.py`, 2FA em `dois_fatores.py` + `painel.py`. Nos testes, a fixture
   `painel(user)` (conftest.py) já entra no admin com o 2FA verificado.

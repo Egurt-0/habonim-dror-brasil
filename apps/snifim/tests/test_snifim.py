@@ -52,3 +52,27 @@ def test_demais_snifim_seguem_em_ordem_alfabetica():
     nomes = list(snifim_ativos().values_list("nome", flat=True))
     assert nomes[0] == "Curitiba"
     assert nomes[1:] == sorted(nomes[1:])
+
+
+@pytest.fixture
+def banner_curitiba(tmp_path, settings):
+    """Pasta static/ temporária com img/snifim/curitiba.jpg."""
+    (tmp_path / "img" / "snifim").mkdir(parents=True)
+    (tmp_path / "img" / "snifim" / "curitiba.jpg").write_bytes(b"jpg")
+    settings.STATICFILES_DIRS = [tmp_path]
+    settings.DEBUG = True  # sem o cache de imagens.achar
+
+
+@pytest.mark.django_db
+def test_banner_do_snif_vem_de_static_pelo_slug(client, banner_curitiba):
+    curitiba = Snif.objects.get(slug="curitiba")
+    assert curitiba.capa_url == "/static/img/snifim/curitiba.jpg"
+    assert Snif.objects.get(slug="recife").capa_url == ""
+
+    pagina = client.get(curitiba.get_absolute_url()).content.decode()
+    assert "background-image: url('/static/img/snifim/curitiba.jpg')" in pagina
+    assert 'og:image" content="http://localhost:8000/static/img/snifim/curitiba.jpg"' in pagina
+
+    lista = client.get(reverse("snifim:lista")).content.decode()
+    assert "background-image: url('/static/img/snifim/curitiba.jpg')" in lista
+    assert lista.count("topico--sem-foto") == 9

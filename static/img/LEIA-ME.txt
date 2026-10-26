@@ -29,8 +29,16 @@ Formatos aceitos: .jpg .jpeg .png .webp (logos tambem .svg)
    Sem ela, aparece a logo completa. (A home usa a 1a foto do fundo e cada snif, a capa.)
    Ideal: 1200x630, menos de 300 KB, sem texto pequeno.
 
-6) FOTOS DE CADA SNIF  ->  NAO vao aqui. Sobem pelo painel (admin), na tela do snif:
-   foto de capa, galeria e foto da Bagrut. O site reduz o tamanho sozinho.
+6) FOTOS DE CADA SNIF
+   BANNER (topo da pagina do snif e card na lista)  ->  img/snifim/<nome>.jpg
+   curitiba  porto-alegre  sao-paulo  rio-de-janeiro  recife  bahia
+   belo-horizonte  campinas  manaus  fortaleza
+   Ideal: 1920x800 (horizontal), menos de 400 KB. O texto fica embaixo a esquerda,
+   entao evite o assunto principal nesse canto.
+   Se uma foto de capa for enviada pelo painel, ela tem prioridade sobre esta.
+   GALERIA e BAGRUT: sobem pelo painel (admin), na tela do snif. O site reduz o tamanho
+   sozinho.
    Galeria e Bagrut so aparecem com "publicacao autorizada" marcado.
 
-Sem foto, o lugar fica em vermelho. Fotos com menores: so com autorizacao (LGPD).
+Sem foto, o lugar fica em vermelho. Fotos com menores: so com autorizacao, ou com
+ninguem identificavel (de costas ou de longe) (LGPD).
