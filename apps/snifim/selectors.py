@@ -32,5 +32,5 @@ def kehilot_parceiras():
 
 def linha_do_tempo():
     """Lista de (ano, [snifim fundados naquele ano]), do mais antigo ao mais novo."""
-    snifim = snifim_ativos().order_by("ano_fundacao", "nome")
+    snifim = snifim_ativos().order_by("ano_fundacao", "ordem", "nome")
     return [(ano, list(grupo)) for ano, grupo in groupby(snifim, key=lambda s: s.ano_fundacao)]

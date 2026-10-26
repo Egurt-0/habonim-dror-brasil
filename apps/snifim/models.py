@@ -113,11 +113,17 @@ class Snif(models.Model):
         help_text="O que aparece na foto (para leitores de tela).",
     )
     ativo = models.BooleanField("ativo", default=True)
+    ordem = models.PositiveSmallIntegerField(
+        "ordem",
+        default=10,
+        help_text="Posição nas listas do site: menor aparece primeiro; empate fica em ordem "
+        "alfabética. Curitiba vem com 1, os demais com 10.",
+    )
 
     class Meta:
         verbose_name = "snif"
         verbose_name_plural = "snifim"
-        ordering = ["nome"]
+        ordering = ["ordem", "nome"]
 
     def __str__(self):
         return self.nome

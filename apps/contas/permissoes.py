@@ -39,6 +39,7 @@ CAMPOS_SO_LEITURA_EDITOR_SNIF = [
     "estado",
     "ano_fundacao",
     "ativo",
+    "ordem",
     "kehila",
     "tem_cchd",
 ]

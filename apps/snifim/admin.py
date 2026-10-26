@@ -36,7 +36,7 @@ class BagrutInline(admin.StackedInline):
 
 @admin.register(Snif)
 class SnifAdmin(admin.ModelAdmin):
-    list_display = ["nome", "estado", "ano_fundacao", "instagram", "tem_cchd", "ativo"]
+    list_display = ["nome", "ordem", "estado", "ano_fundacao", "instagram", "tem_cchd", "ativo"]
     list_filter = ["ativo", "tem_cchd", "estado"]
     list_editable = ["instagram"]
     search_fields = ["nome", "cidade"]
@@ -44,7 +44,7 @@ class SnifAdmin(admin.ModelAdmin):
     inlines = [BagrutInline, FotoSnifInline]
     readonly_fields = ["previa_capa"]
     fieldsets = [
-        (None, {"fields": ["nome", "slug", "cidade", "estado", "ano_fundacao", "ativo"]}),
+        (None, {"fields": ["nome", "slug", "cidade", "estado", "ano_fundacao", "ativo", "ordem"]}),
         ("Texto da página", {"fields": ["resumo", "historia"]}),
         ("Foto de capa", {"fields": ["previa_capa", "foto_capa", "foto_capa_alt"]}),
         ("Contato", {"fields": ["instagram", "contato", "endereco"]}),
