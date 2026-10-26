@@ -36,6 +36,7 @@ def menu(request):
         _item("Bogrot (SB)", reverse("movimento:sb"), request),
     ]
     return [
+        _item("Início", reverse("core:home"), request),
         _item("Bases", reverse("movimento:bases"), request),
         {
             "rotulo": "Shichavot",

@@ -184,8 +184,14 @@ def test_shichavot_ficam_juntas_num_submenu(client):
     html = client.get("/shichavot-bogrot/").content.decode()
     topo = html.split('id="menu-principal"')[1].split("</nav>")[0]
     assert "menu__grupo menu__grupo--atual" in topo
-    assert 'aria-controls="submenu-2"' in topo
+    assert 'aria-controls="submenu-3"' in topo
     assert '<a href="/shichavot-tzeirot/">Tzeirot (ST)</a>' in topo
     assert '<a href="/shichavot-bogrot/" aria-current="page">Bogrot (SB)</a>' in topo
     rodape = html.split('aria-label="Rodapé"')[1]
     assert "Shichavot Tzeirot (ST)" in rodape and "Shichavot Bogrot (SB)" in rodape
+
+
+@pytest.mark.django_db
+def test_menu_tem_inicio_marcado_na_home(client):
+    topo = client.get("/").content.decode().split('id="menu-principal"')[1].split("</nav>")[0]
+    assert '<a href="/" aria-current="page">Início</a>' in topo
