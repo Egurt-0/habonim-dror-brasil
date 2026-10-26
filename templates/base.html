@@ -1,10 +1,24 @@
-{% load static %}<!doctype html>
+{% load static layout %}<!doctype html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block titulo %}{% endblock %}{% block titulo_sufixo %} · Habonim Dror Brasil{% endblock %}</title>
-  <meta name="description" content="{% block descricao %}Habonim Dror Brasil: uma rede nacional de educação judaica não formal, com {{ anos_de_movimento }} anos de história no Brasil.{% endblock %}">
+  {% guardar as titulo_pagina %}{% block titulo %}{% endblock %}{% block titulo_sufixo %} · Habonim Dror Brasil{% endblock %}{% endguardar %}
+  {% guardar as descricao_pagina %}{% block descricao %}Habonim Dror Brasil: uma rede nacional de educação judaica não formal, com {{ anos_de_movimento }} anos de história no Brasil.{% endblock %}{% endguardar %}
+  {% guardar as imagem_pagina %}{% block imagem_compartilhar %}{% if imagem_compartilhar %}{% static imagem_compartilhar %}{% endif %}{% endblock %}{% endguardar %}
+  <title>{{ titulo_pagina }}</title>
+  <meta name="description" content="{{ descricao_pagina }}">
+  <link rel="canonical" href="{{ request.path|absoluta }}">
+  {# Prévia do link no WhatsApp, Instagram, Facebook e afins. Imagens são do próprio site. #}
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Habonim Dror Brasil">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:title" content="{{ titulo_pagina }}">
+  <meta property="og:description" content="{{ descricao_pagina }}">
+  <meta property="og:url" content="{{ request.path|absoluta }}">
+  {% if imagem_pagina %}<meta property="og:image" content="{{ imagem_pagina|absoluta }}">{% endif %}
+  {% if logos.completo %}{% static logos.completo as url_logo %}{% endif %}
+  <meta name="twitter:card" content="{% if imagem_pagina and imagem_pagina != url_logo %}summary_large_image{% else %}summary{% endif %}">
   <meta name="theme-color" content="#da221e">
   {% if logos.icone %}<link rel="icon" href="{% static logos.icone %}">{% endif %}
   <link rel="stylesheet" href="{% static 'css/site.css' %}">
@@ -17,6 +31,7 @@
       .menu { display: flex; position: static; padding: 0; border: 0; width: 100%; }
     }
   </style></noscript>
+  {% block cabeca %}{% endblock %}
 </head>
 <body>
   <a class="pular" href="#conteudo">Pular para o conteúdo</a>

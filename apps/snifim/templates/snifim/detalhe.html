@@ -3,6 +3,7 @@
 
 {% block titulo %}{{ snif.nome }}{% endblock %}
 {% block descricao %}{% if snif.resumo %}{{ snif.resumo }}{% else %}Habonim Dror {{ snif.nome }}: snif fundado em {{ snif.ano_fundacao }}.{% endif %}{% endblock %}
+{% block imagem_compartilhar %}{% if snif.capa_url %}{{ snif.capa_url }}{% else %}{{ block.super }}{% endif %}{% endblock %}
 
 {% block conteudo %}
 {% include "includes/cabecalho_pagina.html" with pagina="snifim" foto_url=snif.capa_url sobretitulo="5 · Snifim" titulo=snif.nome subtitulo=snif.resumo %}

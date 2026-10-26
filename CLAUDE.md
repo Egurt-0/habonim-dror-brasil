@@ -366,6 +366,17 @@ URLs atuais: `/`, `/bases/`, `/shichavot-tzeirot/`, `/shichavot-bogrot/`, `/kehi
 `/contas/senha/esqueci/`, `/contas/senha/redefinir/<uid>/<token>/`, `/contas/senha/trocar/`,
 `/contas/meus-dados/` (+ `baixar/` e `excluir/`)
 e o admin no endereço definido em `DJANGO_ADMIN_URL` (ver `.env`).
+Também `/sitemap.xml` (páginas de `PAGINAS_DO_SITEMAP` em `apps/core/views.py` + snifim ativos;
+**página pública nova entra nessa lista**) e `/robots.txt` (bloqueia `/contas/`; **nunca listar
+o admin** nele, o arquivo é público). Erros: `templates/404.html` e `templates/500.html` (este
+sem `extends`, porque o 500 roda sem request nem context processors).
+
+- **SEO e prévia de link**: `base.html` monta `<title>`, description, canonical e Open Graph a
+  partir dos blocos `titulo`, `descricao` e `imagem_compartilhar` (tag `{% guardar %}` em
+  `apps/core/templatetags/layout.py`, que deixa usar o mesmo bloco duas vezes). URLs absolutas
+  só com o filtro `|absoluta` (usa `DJANGO_SITE_URL`). Imagem padrão: `static/img/compartilhar.*`,
+  senão a logo completa. Glossário: a definição é um `<span class="termo__definicao">` ligado por
+  `aria-describedby` (leitor de tela lê); contraste mínimo 4,5:1 (WCAG AA) em todo texto.
 
 ## Contexto do movimento (resumo do material oficial)
 

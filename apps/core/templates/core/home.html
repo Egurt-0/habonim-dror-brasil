@@ -3,6 +3,9 @@
 
 {% block titulo %}Habonim Dror Brasil{% endblock %}
 {% block titulo_sufixo %}{% endblock %}
+{% block imagem_compartilhar %}{% if fotos_fundo %}{% static fotos_fundo.0 %}{% else %}{{ block.super }}{% endif %}{% endblock %}
+
+{% block cabeca %}<script type="application/ld+json">{{ dados_estruturados }}</script>{% endblock %}
 
 {% block conteudo %}
 <section class="hero{% if not fotos_fundo %} hero--sem-foto{% endif %}">

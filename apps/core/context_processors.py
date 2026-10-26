@@ -39,4 +39,7 @@ def site(request):
         "slogan": blocos("slogan")["slogan"].titulo or com_anos(SLOGAN_PADRAO),
         "anos_de_movimento": anos_de_movimento(),
         "logos": logos(),
+        # Imagem dos links compartilhados (WhatsApp, Instagram…): static/img/compartilhar.jpg,
+        # de preferência 1200×630; sem ela, a logo completa.
+        "imagem_compartilhar": imagens.achar("img/compartilhar") or logos()["completo"],
     }
