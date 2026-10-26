@@ -26,6 +26,7 @@
   <noscript><style>
     /* Sem JavaScript o botão "Menu" não funciona: no celular, o menu fica sempre aberto. */
     .topo__menu-botao { display: none !important; }
+    .menu__grupo:focus-within .submenu { display: flex; }
     @media (max-width: 1060px) {
       .topo__barra { flex-wrap: wrap; padding-bottom: 1rem; }
       .menu { display: flex; position: static; padding: 0; border: 0; width: 100%; }
@@ -52,8 +53,21 @@
 
       <nav id="menu-principal" class="menu" aria-label="Principal">
         <ul>
-          {% for rotulo, url in menu %}
-            <li><a href="{{ url }}"{% if request.path == url %} aria-current="page"{% endif %}>{{ rotulo }}</a></li>
+          {% for item in menu %}
+            {% if item.filhos %}
+              <li class="menu__grupo{% if item.atual %} menu__grupo--atual{% endif %}">
+                <button type="button" class="menu__grupo-botao" aria-expanded="false" aria-controls="submenu-{{ forloop.counter }}">
+                  {{ item.rotulo }} <span class="menu__seta" aria-hidden="true">▾</span>
+                </button>
+                <ul class="submenu" id="submenu-{{ forloop.counter }}">
+                  {% for filho in item.filhos %}
+                    <li><a href="{{ filho.url }}"{% if filho.atual %} aria-current="page"{% endif %}>{{ filho.rotulo }}</a></li>
+                  {% endfor %}
+                </ul>
+              </li>
+            {% else %}
+              <li><a href="{{ item.url }}"{% if item.atual %} aria-current="page"{% endif %}>{{ item.rotulo }}</a></li>
+            {% endif %}
           {% endfor %}
         </ul>
         <div class="menu__acoes">
@@ -92,7 +106,7 @@
       </div>
       <nav aria-label="Rodapé">
         <ul>
-          {% for rotulo, url in menu %}<li><a href="{{ url }}">{{ rotulo }}</a></li>{% endfor %}
+          {% for item in menu %}{% if item.filhos %}{% for filho in item.filhos %}<li><a href="{{ filho.url }}">{{ item.rotulo }} {{ filho.rotulo }}</a></li>{% endfor %}{% else %}<li><a href="{{ item.url }}">{{ item.rotulo }}</a></li>{% endif %}{% endfor %}
           <li><a href="{% url 'snifim:saber_mais' %}">Quero saber mais</a></li>
           <li><a href="{% url 'core:privacidade' %}">Privacidade</a></li>
         </ul>

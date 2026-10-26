@@ -102,6 +102,27 @@ a:hover { color: var(--vermelho-escuro); }
 .menu ul a::after { content: ""; position: absolute; left: 0; right: 100%; bottom: -6px; height: 2px; background: var(--vermelho); transition: right 0.2s; }
 .menu ul a:hover::after, .menu ul a[aria-current="page"]::after { right: 0; }
 .menu ul a[aria-current="page"] { color: var(--vermelho); }
+/* Submenu (ex.: Shichavot → Tzeirot / Bogrot): abre com o mouse por cima ou com o botão
+   (clique, toque, Enter); o site.js controla o aria-expanded */
+.menu__grupo { position: relative; }
+.menu__grupo-botao {
+  display: inline-flex; align-items: center; gap: 0.35rem; padding: 0; border: 0; background: none; cursor: pointer;
+  font: inherit; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--texto);
+}
+.menu__grupo-botao:hover, .menu__grupo--atual .menu__grupo-botao { color: var(--vermelho); }
+.menu__seta { font-size: 0.7em; transition: transform 0.2s; }
+.menu .submenu {
+  position: absolute; top: calc(100% + 0.9rem); left: -1rem; z-index: 11;
+  display: none; flex-direction: column; gap: 0; min-width: 13rem; padding: 0.4rem 0;
+  background: var(--branco); border-top: 3px solid var(--vermelho); box-shadow: 0 10px 24px rgb(0 0 0 / 0.12);
+}
+/* Faixa invisível entre o botão e a caixa, para o mouse não "cair" no caminho */
+.menu .submenu::before { content: ""; position: absolute; left: 0; right: 0; top: -1.2rem; height: 1.2rem; }
+.menu__grupo:hover .submenu, .menu__grupo.aberto .submenu { display: flex; }
+.menu__grupo:hover .menu__seta, .menu__grupo.aberto .menu__seta { transform: rotate(180deg); }
+.menu .submenu a { display: block; padding: 0.6rem 1rem; white-space: nowrap; }
+.menu .submenu a::after { display: none; }
+.menu .submenu a:hover, .menu .submenu a[aria-current="page"] { color: var(--vermelho); background: var(--vermelho-claro); }
 .menu__acoes { display: flex; align-items: center; gap: 0.6rem; }
 .menu__acoes form { margin: 0; }
 .menu__acoes .botao { padding: 0.6rem 1rem; font-size: 0.72rem; }
@@ -124,6 +145,13 @@ a:hover { color: var(--vermelho-escuro); }
   .menu ul { flex-direction: column; gap: 0; }
   .menu ul a { display: block; padding: 0.75rem 0; font-size: 0.95rem; border-bottom: 1px solid var(--borda); }
   .menu ul a::after { display: none; }
+  /* No celular o submenu fica sempre aberto, recuado embaixo do rótulo */
+  .menu__grupo-botao { width: 100%; padding: 0.75rem 0; font-size: 0.95rem; border-bottom: 1px solid var(--borda); cursor: default; pointer-events: none; }
+  .menu__seta { display: none; }
+  .menu .submenu { display: flex; position: static; min-width: 0; padding: 0; border: 0; box-shadow: none; background: none; }
+  .menu .submenu::before { display: none; }
+  .menu .submenu a { padding: 0.65rem 0 0.65rem 1.25rem; white-space: normal; }
+  .menu .submenu a:hover, .menu .submenu a[aria-current="page"] { background: none; }
   .menu__acoes { flex-wrap: wrap; }
 }
 

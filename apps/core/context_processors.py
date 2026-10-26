@@ -25,16 +25,32 @@ def logos():
     }
 
 
+def _item(rotulo, url, request):
+    return {"rotulo": rotulo, "url": url, "atual": request.path == url}
+
+
+def menu(request):
+    """Menu do topo (e do rodapé). Item com "filhos" vira submenu: o rótulo abre a lista."""
+    shichavot = [
+        _item("Tzeirot (ST)", reverse("movimento:st"), request),
+        _item("Bogrot (SB)", reverse("movimento:sb"), request),
+    ]
+    return [
+        _item("Bases", reverse("movimento:bases"), request),
+        {
+            "rotulo": "Shichavot",
+            "filhos": shichavot,
+            "atual": any(filho["atual"] for filho in shichavot),
+        },
+        _item("Kehilá HD", reverse("movimento:kehila"), request),
+        _item("Snifim", reverse("snifim:lista"), request),
+        _item("Glossário", reverse("glossario:lista"), request),
+    ]
+
+
 def site(request):
     return {
-        "menu": [
-            ("Bases", reverse("movimento:bases")),
-            ("Shichavot Tzeirot", reverse("movimento:st")),
-            ("Shichavot Bogrot", reverse("movimento:sb")),
-            ("Kehilá HD", reverse("movimento:kehila")),
-            ("Snifim", reverse("snifim:lista")),
-            ("Glossário", reverse("glossario:lista")),
-        ],
+        "menu": menu(request),
         "ja_escolheu_entrada": ja_escolheu_entrada(request),
         "slogan": blocos("slogan")["slogan"].titulo or com_anos(SLOGAN_PADRAO),
         "anos_de_movimento": anos_de_movimento(),

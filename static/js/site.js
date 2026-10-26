@@ -25,6 +25,38 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Submenus (ex.: Shichavot): o botão abre e fecha (clique, toque, Enter); Esc, clique fora
+  // ou Tab para fora fecham. Passar o mouse por cima abre só com CSS.
+  const grupos = document.querySelectorAll(".menu__grupo");
+  const fecharGrupo = (grupo) => {
+    grupo.classList.remove("aberto");
+    grupo.querySelector(".menu__grupo-botao").setAttribute("aria-expanded", "false");
+  };
+  grupos.forEach((grupo) => {
+    const botaoGrupo = grupo.querySelector(".menu__grupo-botao");
+    botaoGrupo.addEventListener("click", () => {
+      const aberto = grupo.classList.toggle("aberto");
+      botaoGrupo.setAttribute("aria-expanded", String(aberto));
+    });
+    grupo.addEventListener("focusout", (evento) => {
+      if (!grupo.contains(evento.relatedTarget)) fecharGrupo(grupo);
+    });
+  });
+  document.addEventListener("click", (evento) => {
+    grupos.forEach((grupo) => {
+      if (!grupo.contains(evento.target)) fecharGrupo(grupo);
+    });
+  });
+  document.addEventListener("keydown", (evento) => {
+    if (evento.key !== "Escape") return;
+    grupos.forEach((grupo) => {
+      if (grupo.classList.contains("aberto")) {
+        fecharGrupo(grupo);
+        grupo.querySelector(".menu__grupo-botao").focus();
+      }
+    });
+  });
+
   // Fotos do fundo da home: troca suave a cada 7 segundos (se houver mais de uma).
   const fotos = document.querySelectorAll(".hero__foto");
   const semMovimento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
