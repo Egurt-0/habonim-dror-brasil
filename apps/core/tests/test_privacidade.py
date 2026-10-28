@@ -7,7 +7,8 @@ from django.core.management import call_command
 from django.urls import reverse
 from django.utils import timezone
 
-from apps.contas.services import RETENCAO_REGISTROS_DIAS
+from apps.contas.models import User
+from apps.contas.services import RETENCAO_CADASTROS_PENDENTES_DIAS, RETENCAO_REGISTROS_DIAS
 from apps.core.models import BlocoTexto
 
 
@@ -67,3 +68,30 @@ def test_limpeza_apaga_registros_de_login_antigos_e_sessoes_expiradas():
     assert list(AccessAttempt.objects.values_list("username", flat=True)) == ["recente"]
     assert not AccessLog.objects.exists()
     assert not Session.objects.filter(session_key="expirada").exists()
+
+
+def _conta(email, dias_atras, is_active, senha=None):
+    user = User.objects.create_user(email=email, password=senha, is_active=is_active)
+    User.objects.filter(pk=user.pk).update(date_joined=timezone.now() - timedelta(days=dias_atras))
+    return user
+
+
+@pytest.mark.django_db
+def test_limpeza_apaga_pendente_vencido_e_mantem_desativado_com_senha_e_pendente_recente():
+    pendente_antigo = _conta(
+        "pendente-antigo@exemplo.com", RETENCAO_CADASTROS_PENDENTES_DIAS + 1, is_active=False
+    )
+    desativado_com_senha = _conta(
+        "desativado@exemplo.com",
+        RETENCAO_CADASTROS_PENDENTES_DIAS + 1,
+        is_active=False,
+        senha="uma-senha-bem-forte-42",
+    )
+    pendente_recente = _conta("pendente-recente@exemplo.com", 1, is_active=False)
+
+    call_command("limpar_dados_pessoais")
+
+    restantes = set(User.objects.values_list("email", flat=True))
+    assert pendente_antigo.email not in restantes
+    assert desativado_com_senha.email in restantes
+    assert pendente_recente.email in restantes
