@@ -29,11 +29,15 @@ def ja_escolheu_entrada(request):
 def ip_do_cliente(request):
     """IP do visitante para o django-axes.
 
-    Atrás de um proxy, REMOTE_ADDR é o IP do próprio proxy (igual para todo mundo). Nesse caso
-    usa o último IP de X-Forwarded-For, que é o que o proxy acrescentou. Os anteriores vêm do
-    visitante e podem ser falsificados, por isso não são usados.
+    Atrás de um proxy, REMOTE_ADDR é o IP do próprio proxy (igual para todo mundo). A origem só
+    aceita conexão do Cloudflare, então CF-Connecting-IP (preenchido por ele, não pelo
+    visitante) é confiável e vem primeiro. Sem ele, usa o último IP de X-Forwarded-For, que é o
+    que o proxy acrescentou (os anteriores vêm do visitante e podem ser falsificados).
     """
     if settings.ATRAS_DE_PROXY:
+        do_cloudflare = request.META.get("HTTP_CF_CONNECTING_IP", "").strip()
+        if do_cloudflare:
+            return do_cloudflare
         encaminhado = request.META.get("HTTP_X_FORWARDED_FOR", "")
         ultimo = encaminhado.split(",")[-1].strip()
         if ultimo:
