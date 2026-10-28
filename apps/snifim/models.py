@@ -1,3 +1,6 @@
+from pathlib import Path
+from uuid import uuid4
+
 from django.db import models, transaction
 from django.templatetags.static import static
 from django.urls import reverse
@@ -8,9 +11,12 @@ from .validators import validar_imagem
 
 
 def _caminho(instancia, pasta, nome_arquivo):
-    """Uploads ficam em media/snifim/<slug do snif>/<pasta>/."""
+    """Uploads ficam em media/snifim/<slug do snif>/<pasta>/, com nome aleatório (LGPD: o
+    nome original do arquivo pode identificar quem aparece na foto e gerar URL previsível).
+    """
     snif = instancia if isinstance(instancia, Snif) else instancia.snif
-    return f"snifim/{snif.slug}/{pasta}/{nome_arquivo}"
+    extensao = Path(nome_arquivo).suffix.lower()
+    return f"snifim/{snif.slug}/{pasta}/{uuid4().hex}{extensao}"
 
 
 # Funções nomeadas no módulo: as migrations precisam conseguir importá-las.
@@ -36,7 +42,8 @@ AJUDA_SEM_NOMES_DE_MENORES = (
 
 AJUDA_AUTORIZACAO = (
     "Marque só se todas as pessoas da foto (ou os responsáveis, no caso de menores) "
-    "autorizaram a publicação. Sem essa marcação, a foto não aparece no site."
+    "autorizaram a publicação. Sem essa marcação, a foto não aparece no site. Para "
+    "retirar uma foto já publicada, exclua a foto: só desmarcar não remove o arquivo."
 )
 
 
