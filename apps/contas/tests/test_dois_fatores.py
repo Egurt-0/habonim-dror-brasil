@@ -131,6 +131,26 @@ def test_next_externo_e_ignorado(client, staff, com_2fa):
 
 
 @pytest.mark.django_db
+def test_reconfigurar_2fa_apaga_o_totp_antigo(client, staff, com_2fa):
+    """Trocar de celular: confirmar o novo app invalida o antigo, mesmo já confirmado."""
+    antigo, _ = com_2fa
+    _login_com_senha(client)
+    client.post(reverse("contas:verificar_2fa"), {"codigo": _codigo(antigo), "next": ADMIN})
+    client.get(reverse("contas:configurar_2fa"))
+    novo = TOTPDevice.objects.get(user=staff, confirmed=False)
+    client.post(reverse("contas:configurar_2fa"), {"codigo": _codigo(novo), "next": ADMIN})
+    assert not TOTPDevice.objects.filter(pk=antigo.pk).exists()
+    assert list(TOTPDevice.objects.filter(user=staff).values_list("pk", flat=True)) == [novo.pk]
+
+
+@pytest.mark.django_db
+def test_staff_sem_verificacao_e_redirecionado_ao_trocar_senha(client, staff, com_2fa):
+    _login_com_senha(client)
+    resposta = client.get(reverse("contas:trocar_senha"))
+    assert resposta.url.startswith(reverse("contas:verificar_2fa"))
+
+
+@pytest.mark.django_db
 def test_sair_exige_2fa_de_novo(client, staff, com_2fa):
     device, _ = com_2fa
     _login_com_senha(client)
