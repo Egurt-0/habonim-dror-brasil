@@ -50,9 +50,10 @@ BLOCOS = {
     "priv_retencao": (
         "Por quanto tempo guardamos",
         "Os registros de segurança de login são apagados automaticamente depois de 90 dias. "
-        "As sessões expiram sozinhas. Os dados da conta ficam enquanto a conta existir; se "
-        "você pedir a exclusão, eles são apagados, exceto o que a lei obrigar a guardar "
-        "(por exemplo, registros de doações para fins fiscais).",
+        "Cadastros nunca confirmados são apagados depois de 7 dias. As sessões expiram "
+        "sozinhas. Os dados da conta ficam enquanto a conta existir; se você pedir a "
+        "exclusão, eles são apagados, exceto o que a lei obrigar a guardar (por exemplo, "
+        "registros de doações para fins fiscais).",
     ),
     "priv_direitos": (
         "Seus direitos",

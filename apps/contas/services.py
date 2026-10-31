@@ -61,6 +61,26 @@ def apagar_registros_de_acesso_antigos(dias=RETENCAO_REGISTROS_DIAS):
     return total
 
 
+# O link de ativação vale 1 dia; depois disso o cadastro pendente não serve para nada.
+RETENCAO_CADASTROS_PENDENTES_DIAS = 7
+
+
+def apagar_cadastros_pendentes_antigos(dias=RETENCAO_CADASTROS_PENDENTES_DIAS):
+    """Apaga contas de cadastro nunca confirmado, mais velhas que `dias` (LGPD).
+
+    Só pega quem nunca logou e nunca criou senha, para não apagar conta desativada no painel
+    (que tem senha). Devolve quantas contas foram apagadas.
+    """
+    limite = timezone.now() - timedelta(days=dias)
+    apagados, _ = User.objects.filter(
+        is_active=False,
+        last_login__isnull=True,
+        password__startswith="!",
+        date_joined__lt=limite,
+    ).delete()
+    return apagados
+
+
 # E-mails -----------------------------------------------------------------------------------
 
 # Anti-abuso: no máximo N e-mails por endereço por hora (cadastro e "esqueci a senha"), para
@@ -137,7 +157,7 @@ def cadastrar(first_name, email):
             declarou_maioridade_em=agora,
         )
         _enviar_ativacao(user)
-    elif not existente.is_active:
+    elif not existente.is_active and not existente.has_usable_password():
         _enviar_ativacao(existente)  # cadastro pendente: reenvia o link sem mudar a conta
     else:
         enviar_email(

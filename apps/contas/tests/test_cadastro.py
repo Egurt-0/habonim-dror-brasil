@@ -111,6 +111,23 @@ def test_cadastro_pendente_reenvia_link_sem_mudar_a_conta(client, aberto):
 
 
 @pytest.mark.django_db
+def test_conta_desativada_com_senha_nao_e_reativada_pelo_cadastro(client, aberto):
+    desativada = User.objects.create_user(
+        email="rivka@exemplo.com", password=SENHA, first_name="Rivka", is_staff=True
+    )
+    desativada.is_active = False
+    desativada.save()
+
+    resposta = _cadastrar(client)
+
+    assert resposta.url == reverse("contas:cadastro_enviado")  # mesma resposta de sempre
+    desativada.refresh_from_db()
+    assert not desativada.is_active
+    assert desativada.check_password(SENHA)
+    assert "já tem uma" in mail.outbox[0].body  # recebe o aviso padrão, não um link de ativação
+
+
+@pytest.mark.django_db
 def test_limite_de_emails_por_endereco(client, aberto):
     for _ in range(LIMITE_EMAILS_POR_HORA + 2):
         _cadastrar(client)
