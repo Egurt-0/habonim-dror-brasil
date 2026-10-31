@@ -74,6 +74,18 @@ def test_ip_atras_de_proxy_usa_o_ip_que_o_proxy_acrescentou(settings):
     assert ip_do_cliente(request) == "200.1.1.1"
 
 
+def test_ip_atras_de_proxy_prefere_o_cloudflare_connecting_ip(settings):
+    settings.ATRAS_DE_PROXY = True
+    # A origem só aceita conexão do Cloudflare, então X-Forwarded-For aqui é o IP da borda dele.
+    request = RequestFactory().get(
+        "/",
+        REMOTE_ADDR="127.0.0.1",
+        HTTP_X_FORWARDED_FOR="200.1.1.1",
+        HTTP_CF_CONNECTING_IP="8.8.8.8",
+    )
+    assert ip_do_cliente(request) == "8.8.8.8"
+
+
 @pytest.mark.parametrize(
     "chave",
     ["troque-por-uma-chave-longa-e-aleatoria", "django-insecure-" + "x" * 50, "curta", "a" * 60],
