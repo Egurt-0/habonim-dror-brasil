@@ -1,4 +1,7 @@
+from django.core.validators import RegexValidator
 from django.db import models
+
+VALIDADOR_LINK_INTERNO = RegexValidator(r"^/(?![/\\])", "Use um caminho interno, começando com /.")
 
 
 class BlocoTexto(models.Model):
@@ -34,7 +37,10 @@ class Topico(models.Model):
     )
     resumo = models.CharField("resumo", max_length=200)
     link = models.CharField(
-        "link do Saiba mais", max_length=200, help_text="Caminho interno, ex.: /bases/#pilares"
+        "link do Saiba mais",
+        max_length=200,
+        help_text="Caminho interno, ex.: /bases/#pilares",
+        validators=[VALIDADOR_LINK_INTERNO],
     )
     ordem = models.PositiveSmallIntegerField("ordem", default=0)
     ativo = models.BooleanField("ativo", default=True)
