@@ -82,6 +82,15 @@ def test_excluir_snif_apaga_as_fotos_em_cascata(recife, no_commit):
 
 
 @pytest.mark.django_db
+def test_nome_original_nao_aparece_no_arquivo_salvo(recife):
+    """LGPD: o nome do arquivo enviado não pode sobreviver no caminho salvo (pode identificar
+    quem aparece na foto e permite adivinhar a URL de fotos não autorizadas)."""
+    foto = FotoSnif.objects.create(snif=recife, imagem=_foto("IMG_1234.jpg"), alt="roda")
+    assert "IMG_1234" not in foto.imagem.name
+    assert "IMG_1234" not in foto.miniatura.name
+
+
+@pytest.mark.django_db
 def test_sem_commit_nada_e_apagado(recife):
     """Se a transação for desfeita, o arquivo antigo continua (o banco ainda aponta para ele)."""
     recife.foto_capa = _foto("a.jpg")
