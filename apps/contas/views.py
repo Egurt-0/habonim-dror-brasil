@@ -128,6 +128,17 @@ class TrocarSenhaView(auth_views.PasswordChangeView):
     template_name = "contas/trocar_senha.html"
     success_url = reverse_lazy("contas:meus_dados")
 
+    def dispatch(self, request, *args, **kwargs):
+        if (
+            request.user.is_authenticated
+            and request.user.is_staff
+            and not request.user.is_verified()
+        ):
+            # Trocar a senha da equipe só com a senha não basta: exige o 2FA antes.
+            destino = urlencode({"next": request.path})
+            return redirect(f"{reverse('contas:verificar_2fa')}?{destino}")
+        return super().dispatch(request, *args, **kwargs)
+
     def form_valid(self, form):
         resposta = super().form_valid(form)  # mantém a pessoa logada com a senha nova
         messages.success(self.request, "Senha alterada.")

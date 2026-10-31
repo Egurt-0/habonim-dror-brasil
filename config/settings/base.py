@@ -93,6 +93,11 @@ AUTHENTICATION_BACKENDS = [
 
 # 2FA do painel (apps/contas/dois_fatores.py): nome que aparece no aplicativo autenticador.
 OTP_TOTP_ISSUER = "Habonim Dror Brasil"
+# Esconde segredo do TOTP e códigos de recuperação na tela de admin dos dispositivos.
+OTP_ADMIN_HIDE_SENSITIVE_DATA = True
+
+# Sessão expira depois de 12h, mesmo em computador compartilhado (vale para toda a equipe).
+SESSION_COOKIE_AGE = 60 * 60 * 12
 
 # Cadastro público: pronto, mas fechado até as doações existirem (fase 4). Ver CLAUDE.md.
 CADASTRO_ABERTO = env("DJANGO_CADASTRO_ABERTO")
@@ -126,7 +131,10 @@ ATRAS_DE_PROXY = env("DJANGO_ATRAS_DE_PROXY")
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "OPTIONS": {"min_length": 12},
+    },
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]

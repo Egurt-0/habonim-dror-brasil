@@ -50,7 +50,9 @@ def confirmar(device, token):
         return None
     device.confirmed = True
     device.save()
-    TOTPDevice.objects.filter(user=device.user, confirmed=False).delete()
+    # Apaga qualquer outro TOTP do usuário (inclusive já confirmado): ao trocar de celular, o
+    # aparelho antigo deixa de valer.
+    TOTPDevice.objects.filter(user=device.user).exclude(pk=device.pk).delete()
     return gerar_codigos_de_recuperacao(device.user)
 
 
